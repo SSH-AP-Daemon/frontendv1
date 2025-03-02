@@ -1,0 +1,426 @@
+//App.tsx 
+
+// import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import NavBar from "./NavBar";
+import SignUp from "./SignUp";
+import SignIn from "./SignIn";
+import Home from "./Home";
+
+function App() {
+  return (
+    <>
+      <NavBar state="notLoggedIn" />
+      <Routes>
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/" element={<Home />} />
+
+        <Route
+          path="*"
+          element={
+            <>
+              <h1>404</h1>
+              <h3>Bad gateway</h3>
+            </>
+          }
+        />
+      </Routes>
+    </>
+  );
+}
+
+export default App;
+
+import React, { useState } from "react";
+import { Form, Button, Container, Card } from "react-bootstrap";
+
+const SignUp: React.FC = () => {
+  const [formData, setFormData] = useState({
+    user_name: "",
+    password: "",
+    name: "",
+    email: "",
+    contact_number: "",
+    user_type: "",
+    date_of_birth: "",
+    date_of_death: "",
+    gender: "",
+    address: "",
+    educational_qualification: "",
+    occupation: "",
+    citizen_user_name: "",
+    role: "",
+  });
+
+  const [step, setStep] = useState(1); // Step control (1 = Basic Info, 2 = Extra Fields)
+  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // Store error messages
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const validateBasicInfo = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    // Validate contact number (must be 10 digits)
+    if (!/^\d{10}$/.test(formData.contact_number)) {
+      newErrors.contact_number = "Contact number must be exactly 10 digits.";
+    }
+
+    // Validate password (at least 8 chars, 1 special char, 1 digit, 1 uppercase)
+    if (
+      !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+        formData.password
+      )
+    ) {
+      newErrors.password =
+        "Password must be at least 8 chars, with 1 uppercase, 1 digit, and 1 special char.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateBasicInfo()) {
+      setStep(2); // Move to next step only if validation passes
+    }
+  };
+
+  const handleFinalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("User Data:", formData);
+  };
+
+  return (
+    <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Card className="p-4 shadow-lg rounded-3" style={{ width: "350px" }}>
+        <h2 className="text-center mb-3">Sign Up</h2>
+        <Form onSubmit={step === 1 ? handleNext : handleFinalSubmit}>
+          {/* STEP 1: Basic Information */}
+          {step === 1 && (
+            <>
+              <Form.Group controlId="user_name">
+                <Form.Label>UserName</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your username"
+                  name="user_name"
+                  value={formData.user_name}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="password">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Enter your password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.password && (
+                  <small className="text-danger">{errors.password}</small>
+                )}
+              </Form.Group>
+
+              <Form.Group controlId="name">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="email">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter your email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="contact_number">
+                <Form.Label>Contact</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your contact number"
+                  name="contact_number"
+                  value={formData.contact_number}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.contact_number && (
+                  <small className="text-danger">{errors.contact_number}</small>
+                )}
+              </Form.Group>
+
+              <Form.Group controlId="user_type" className="mt-3">
+                <Form.Label>User Type</Form.Label>
+                <Form.Select
+                  name="user_type"
+                  value={formData.user_type}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select User Type</option>
+                  <option value="Citizen">Citizen</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Panchayat Employee">Panchayat Employee</option>
+                  <option value="Government Agency">Government Agency</option>
+                </Form.Select>
+              </Form.Group>
+
+              <Button variant="primary" type="submit" className="w-100 mt-4">
+                Next
+              </Button>
+            </>
+          )}
+
+          {/* STEP 2: Extra Fields Based on User Type */}
+          {step === 2 && (
+            <>
+              {formData.user_type === "Citizen" && (
+                <>
+                  <Form.Group controlId="date_of_birth">
+                    <Form.Label>Date of Birth</Form.Label>
+                    <Form.Control
+                      type="date"
+                      name="date_of_birth"
+                      value={formData.date_of_birth}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="gender">
+                    <Form.Label>Gender</Form.Label>
+                    <Form.Select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </Form.Select>
+                  </Form.Group>
+
+                  <Form.Group controlId="address">
+                    <Form.Label>Address</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </>
+              )}
+
+              {formData.user_type === "Admin" && (
+                <>
+                  <Form.Group controlId="date_of_birth">
+                    <Form.Label>Date of Birth</Form.Label>
+                    <Form.Control
+                      type="date"
+                      name="date_of_birth"
+                      value={formData.date_of_birth}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="gender">
+                    <Form.Label>Gender</Form.Label>
+                    <Form.Select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </Form.Select>
+                  </Form.Group>
+                </>
+              )}
+
+              {formData.user_type === "Panchayat Employee" && (
+                <Form.Group controlId="role">
+                  <Form.Label>Role</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              )}
+
+              {formData.user_type === "Government Agency" && (
+                <Form.Group controlId="role">
+                  <Form.Label>Role</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              )}
+
+              <Button variant="success" type="submit" className="w-100 mt-4">
+                Submit
+              </Button>
+            </>
+          )}
+        </Form>
+      </Card>
+    </Container>
+  );
+};
+
+export default SignUp;
+
+
+import React, { useState } from "react";
+import { Form, Button, Container, Card, Alert } from "react-bootstrap";
+
+const SignIn: React.FC = () => {
+  const [formData, setFormData] = useState({
+    user_name: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
+    user_name: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    let newErrors = { user_name: "", password: "" };
+
+    if (!formData.user_name.trim()) {
+      newErrors.user_name = "Username is required!";
+      isValid = false;
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required!";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      console.log("User Data:", formData);
+      // Perform login logic here
+    }
+  };
+
+  return (
+    <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Card className="p-4 shadow-lg rounded-3" style={{ width: "350px" }}>
+        <h2 className="text-center mb-3">Sign In</h2>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="user_name">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter your username"
+              name="user_name"
+              value={formData.user_name}
+              onChange={handleChange}
+              required
+            />
+            {errors.user_name && (
+              <Alert variant="danger">{errors.user_name}</Alert>
+            )}
+          </Form.Group>
+
+          <Form.Group controlId="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Enter your password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            {errors.password && (
+              <Alert variant="danger">{errors.password}</Alert>
+            )}
+          </Form.Group>
+
+          <Button variant="primary" type="submit" className="w-100 mt-4">
+            Sign In
+          </Button>
+        </Form>
+      </Card>
+    </Container>
+  );
+};
+
+export default SignIn;
+
+
+As of now I have created these 3 pages , Now idea is that
+when a user or anyone will try to sign-up we will send the request to backend and after some time it will be verified that is 
+is verfied will be set to true
+
+Now if and only if the isverified is set to true , and some-one try to logIn , then we will render a page which will basically home page only 
+but the state will change and correspondingly 
+if it is panchayat employee it will have some role according to these things we will show them a different nav Bar 
+
+NavBar specifications : 
+
+Citizen : 
+home, assets, family, documents, finances, welfare schemes, issues, infrastructures on left and profile, logout on  right side
+
+state 3: panchayat_employee
+a)role = asset mang. : home view create delete edit on left,  profile, logout on right
+b)role = family mang. : home view create edit delete on left , profile, logout on right
+c)role = issue mang. : home view update on left ,  profile,logout on right
+d)role=documents mang : home view create delete edit on left, profile, logout on right
+e)role=Finance mang: home view create delete edit on left, profile logout on right
+f)role=welfare mang: home view pending on left, profile logout on right
+g)role=infra mang : home view update  on left, profile logout on right
+h)role=env mang: home view create delete edit on left, profile, logout on right
+state4: Admin : home view activity_log on left, profile logout on right
+state5: govt agency: home view  edit create edit , profile logout
+use react with typescript
