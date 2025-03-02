@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert } from "react-bootstrap";
-// import api from "../api/axiosConfig.tsx"; // Import API configuration
+import api from "../../api/axiosConfig.tsx"; // Import API configuration
 
 // Define interface for financial data structure
 interface FinancialData {
@@ -30,39 +30,37 @@ const CitizenFinances: React.FC = () => {
          * It will fetch actual financial data from the backend.
          */
 
-        // const response = await api.get("/citizen/financial-data", {
-        //   headers: { Authorization: `Bearer ${your_jwt_token}` },
-        // });
+        const response = await api.get("/citizen/financial-data");
 
         // Mocked API Response (Replace with real API response for testing)
-        const response = {
-          data: {
-            statusCode: 200,
-            message: "Financial data fetched successfully",
-            data: [
-              {
-                year: 2023,
-                Annual_Income: 75000.0,
-                Income_source: "Software Engineer",
-                Tax_paid: 5000.0,
-                Tax_liability: 6000.0,
-                Debt_liability: 10000.0,
-                Credit_score: 750,
-                Last_updated: "2024-02-20 14:30:00",
-              },
-              {
-                year: 2022,
-                Annual_Income: 70000.0,
-                Income_source: "Software Engineer",
-                Tax_paid: 4500.0,
-                Tax_liability: 5500.0,
-                Debt_liability: 12000.0,
-                Credit_score: 730,
-                Last_updated: "2023-02-15 12:15:00",
-              },
-            ],
-          },
-        };
+        // const response = {
+        //   data: {
+        //     statusCode: 200,
+        //     message: "Financial data fetched successfully",
+        //     data: [
+        //       {
+        //         year: 2023,
+        //         Annual_Income: 75000.0,
+        //         Income_source: "Software Engineer",
+        //         Tax_paid: 5000.0,
+        //         Tax_liability: 6000.0,
+        //         Debt_liability: 10000.0,
+        //         Credit_score: 750,
+        //         Last_updated: "2024-02-20 14:30:00",
+        //       },
+        //       {
+        //         year: 2022,
+        //         Annual_Income: 70000.0,
+        //         Income_source: "Software Engineer",
+        //         Tax_paid: 4500.0,
+        //         Tax_liability: 5500.0,
+        //         Debt_liability: 12000.0,
+        //         Credit_score: 730,
+        //         Last_updated: "2023-02-15 12:15:00",
+        //       },
+        //     ],
+        //   },
+        // };
 
         // Handling API response
         if (response.data.statusCode === 200) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert } from "react-bootstrap";
-// import api from "../api/axiosConfig.tsx"; // Import API configuration
+import api from "../../api/axiosConfig.tsx"; // Import API configuration
 
 // Define interface for infrastructure data
 interface Infrastructure {
@@ -26,35 +26,33 @@ const CitizenInfrastructure: React.FC = () => {
          * This will fetch actual infrastructure data.
          */
 
-        // const response = await api.get("/citizen/infrastructure", {
-        //   headers: { Authorization: `Bearer ${your_jwt_token}` },
-        // });
+        const response = await api.get("/citizen/infrastructure");
 
         // Mocked API Response for Testing
-        const response = {
-          data: {
-            data: [
-              {
-                Description: "Construction of a new school building",
-                Location: "Village A",
-                Funding: 500000,
-                Actual_cost: 480000,
-              },
-              {
-                Description: "Repair of main village road",
-                Location: "Village B",
-                Funding: 200000,
-                Actual_cost: 210000,
-              },
-              {
-                Description: "Installation of solar street lights",
-                Location: "Village C",
-                Funding: 100000,
-                Actual_cost: 95000,
-              },
-            ],
-          },
-        };
+        // const response = {
+        //   data: {
+        //     data: [
+        //       {
+        //         Description: "Construction of a new school building",
+        //         Location: "Village A",
+        //         Funding: 500000,
+        //         Actual_cost: 480000,
+        //       },
+        //       {
+        //         Description: "Repair of main village road",
+        //         Location: "Village B",
+        //         Funding: 200000,
+        //         Actual_cost: 210000,
+        //       },
+        //       {
+        //         Description: "Installation of solar street lights",
+        //         Location: "Village C",
+        //         Funding: 100000,
+        //         Actual_cost: 95000,
+        //       },
+        //     ],
+        //   },
+        // };
 
         // Handling API response
         if (response.data.data) {

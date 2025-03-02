@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axiosConfig.tsx";
 
 const SignIn: React.FC = () => {
-  const { setUserType, setRole } = useAuth();
+  const { setUserType, setRole, setJwt, setUserName } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -59,11 +59,21 @@ const SignIn: React.FC = () => {
     try {
       const response = await api.post("/user/login", formData);
       const User_type = response.data.user_type;
-      setUserType(User_type); // Update global state
+      localStorage.setItem("userType", User_type);
+      setUserType(User_type);
 
       const Role = response.data.Role || "";
-      console.log("dgd");
+      localStorage.setItem("role", Role);
       setRole(Role);
+
+      const userName = response.data.username;
+      localStorage.setItem("userName", userName);
+      setUserName(userName);
+
+      const jwt = response.data.access_token;
+      // save the jwt in local storage
+      localStorage.setItem("jwtToken", jwt);
+      setJwt(jwt);
       console.log(User_type, Role);
       console.log(response);
       navigate("/"); // Redirect to home

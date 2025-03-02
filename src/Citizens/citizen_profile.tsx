@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Card, ListGroup, Spinner, Alert } from "react-bootstrap";
-// import api from "../api/axiosConfig.tsx"; // Import API configuration
+import api from "../../api/axiosConfig.tsx"; // Import API configuration
 
 // Define interface for profile data
 interface Profile {
@@ -34,28 +34,26 @@ const CitizenProfile: React.FC = () => {
          * Uncomment this when backend is ready for testing
          * This will fetch actual profile data.
          */
-        // const response = await api.get("/citizen/profile", {
-        //   headers: { Authorization: `Bearer ${your_jwt_token}` },
-        // });
+        const response = await api.get("/citizen/profile");
 
         // Mock API Response for Testing
-        const response = {
-          data: {
-            data: {
-              Date_of_birth: "1990-05-15",
-              Date_of_death: null,
-              Gender: "Male" as "Male" | "Female" | "Other", // ✅ Cast to match expected type
-              Address: "123, Village Street, District A",
-              Educational_qualification:
-                "Graduate" as Profile["Educational_qualification"], // ✅ Cast qualification
-              Occupation: "Software Engineer",
-            },
-          },
-        };
+        // const response = {
+        //   data: {
+        //     data: {
+        //       Date_of_birth: "1990-05-15",
+        //       Date_of_death: null,
+        //       Gender: "Male" as "Male" | "Female" | "Other", // ✅ Cast to match expected type
+        //       Address: "123, Village Street, District A",
+        //       Educational_qualification:
+        //         "Graduate" as Profile["Educational_qualification"], // ✅ Cast qualification
+        //       Occupation: "Software Engineer",
+        //     },
+        //   },
+        // };
 
         // Handling API response
-        if (response.data.data) {
-          setProfile(response.data.data);
+        if (response.data) {
+          setProfile(response.data);
         } else {
           setError("Failed to fetch profile details.");
         }

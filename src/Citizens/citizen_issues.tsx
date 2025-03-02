@@ -8,7 +8,7 @@ import {
   Alert,
   Modal,
 } from "react-bootstrap";
-// import api from "../api/axiosConfig.tsx"; // Import API configuration
+import api from "../../api/axiosConfig.tsx"; // Import API configuration
 
 interface Issue {
   Issue_id: number;
@@ -23,50 +23,49 @@ const CitizenIssues: React.FC = () => {
   const [newIssue, setNewIssue] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingIssue, setDeletingIssue] = useState<number | null>(null);
+  
+  const fetchIssues = async () => {
+    try {
+      // Dummy data for testing
+      const response = await api.get("/citizen/issues");
 
+      // const response = {
+      //   data: {
+      //     statusCode: 200,
+      //     message: "Issues fetched successfully",
+      //     data: [
+      //       {
+      //         Issue_id: 1,
+      //         description: "Streetlight not working",
+      //         status: "Pending",
+      //       },
+      //       {
+      //         Issue_id: 2,
+      //         description: "Pothole in front of my house",
+      //         status: "Resolved",
+      //       },
+      //       {
+      //         Issue_id: 3,
+      //         description: "Water supply issue",
+      //         status: "In Progress",
+      //       },
+      //     ],
+      //   },
+      // };
+
+      if (response.data.statusCode === 200) {
+        setIssues(response.data.data);
+      } else {
+        setError(response.data.message || "Failed to fetch issues.");
+      }
+    } catch (err) {
+      setError("Error fetching issues. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
   // Fetch Issues from API
   useEffect(() => {
-    const fetchIssues = async () => {
-      try {
-        // Dummy data for testing
-        // const response = await api.get("/citizen/issues");
-
-        const response = {
-          data: {
-            statusCode: 200,
-            message: "Issues fetched successfully",
-            data: [
-              {
-                Issue_id: 1,
-                description: "Streetlight not working",
-                status: "Pending",
-              },
-              {
-                Issue_id: 2,
-                description: "Pothole in front of my house",
-                status: "Resolved",
-              },
-              {
-                Issue_id: 3,
-                description: "Water supply issue",
-                status: "In Progress",
-              },
-            ],
-          },
-        };
-
-        if (response.data.statusCode === 200) {
-          setIssues(response.data.data);
-        } else {
-          setError(response.data.message || "Failed to fetch issues.");
-        }
-      } catch (err) {
-        setError("Error fetching issues. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchIssues();
   }, []);
 
@@ -76,25 +75,20 @@ const CitizenIssues: React.FC = () => {
     if (!newIssue.trim()) return;
 
     try {
-      // Dummy response simulating successful creation
-      const response = {
-        data: {
-          statusCode: 200,
-          data: [{ Issue_id: issues.length + 1, status: "Pending" }],
-        },
-      };
+      const response = await api.post("/citizen/issues", { description: newIssue });
 
-      if (response.data.statusCode === 200) {
+      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
         setIssues([
           ...issues,
           {
-            Issue_id: response.data.data[0].Issue_id,
+            Issue_id: response.data.Issue_id,
             description: newIssue,
             status: "Pending",
           },
         ]);
         setNewIssue("");
         setShowModal(false);
+        fetchIssues();
       }
     } catch (err) {
       setError("Error creating issue. Please try again.");
@@ -104,10 +98,9 @@ const CitizenIssues: React.FC = () => {
   // Handle Issue Deletion
   const handleDeleteIssue = async (id: number) => {
     try {
-      // Dummy response simulating successful deletion
-      const response = { statusCode: 200 };
+      const response = await api.delete(`/citizen/issue/`, { params: { Issue_id: id } });
 
-      if (response.statusCode === 200) {
+      if (response.data.statusCode === 200) {
         setIssues(issues.filter((issue) => issue.Issue_id !== id));
         setDeletingIssue(null);
       }

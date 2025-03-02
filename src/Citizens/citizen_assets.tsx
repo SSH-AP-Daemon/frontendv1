@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Container, Spinner, Alert } from "react-bootstrap";
-// import api from "../../api/axiosConfig.tsx";
+import api from "../../api/axiosConfig.tsx";
 
 interface Asset {
   type: string;
@@ -20,41 +20,41 @@ const CitizenAssets: React.FC = () => {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        // const response = await api.get("/citizen/assets");
-        const response = {
-          data: {
-            statusCode: 200,
-            message: "Assets fetched successfully",
-            data: [
-              {
-                type: "house",
-                valuation: "$150,000",
-              },
-              {
-                type: "agricultural_land",
-                valuation: "$50,000",
-                Year: 2024,
-                Season: "Summer",
-                Crop_type: "Wheat",
-                Area_cultivated: 4.5,
-                Yield: 7.2,
-              },
-              {
-                type: "car",
-                valuation: "$20,000",
-              },
-              {
-                type: "agricultural_land",
-                valuation: "$80,000",
-                Year: 2023,
-                Season: "Winter",
-                Crop_type: "Rice",
-                Area_cultivated: 3.2,
-                Yield: 6.8,
-              },
-            ],
-          },
-        };
+        const response = await api.get("/citizen/assets");
+        // const response = {
+        //   data: {
+        //     statusCode: 200,
+        //     message: "Assets fetched successfully",
+        //     data: [
+        //       {
+        //         type: "house",
+        //         valuation: "$150,000",
+        //       },
+        //       {
+        //         type: "agricultural_land",
+        //         valuation: "$50,000",
+        //         Year: 2024,
+        //         Season: "Summer",
+        //         Crop_type: "Wheat",
+        //         Area_cultivated: 4.5,
+        //         Yield: 7.2,
+        //       },
+        //       {
+        //         type: "car",
+        //         valuation: "$20,000",
+        //       },
+        //       {
+        //         type: "agricultural_land",
+        //         valuation: "$80,000",
+        //         Year: 2023,
+        //         Season: "Winter",
+        //         Crop_type: "Rice",
+        //         Area_cultivated: 3.2,
+        //         Yield: 6.8,
+        //       },
+        //     ],
+        //   },
+        // };
         if (response.data.statusCode === 200) {
           setAssets(response.data.data);
         } else {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table, Button, Spinner, Alert } from "react-bootstrap";
-// import api from "../api/axiosConfig.tsx"; // Import API configuration
+import api from "../../api/axiosConfig.tsx"; // Import API configuration
 
 // Define interface for welfare schemes
 interface WelfareScheme {
@@ -29,43 +29,41 @@ const CitizenWelfSchemes: React.FC = () => {
          * This will fetch actual welfare schemes data.
          */
 
-        // const response = await api.get("/citizen/welfare-scheme", {
-        //   headers: { Authorization: `Bearer ${your_jwt_token}` },
-        // });
+        const response = await api.get("/citizen/welfare-scheme");
 
         // Mocked API Response for Testing
-        const response = {
-          data: {
-            statusCode: 200,
-            message: "Schemes fetched successfully",
-            data: [
-              {
-                Scheme_fk: 1,
-                Scheme_name: "Health Insurance Scheme",
-                Description:
-                  "Provides free health insurance for low-income citizens.",
-                Application_deadline: "2025-03-31",
-                status: "APPROVED",
-              },
-              {
-                Scheme_fk: 2,
-                Scheme_name: "Educational Grant",
-                Description:
-                  "Scholarship for students pursuing higher education.",
-                Application_deadline: "2025-06-15",
-                status: undefined, // Not applied yet
-              },
-              {
-                Scheme_fk: 3,
-                Scheme_name: "Housing Assistance",
-                Description:
-                  "Financial support for housing and rent subsidies.",
-                Application_deadline: "2024-12-01",
-                status: "PENDING",
-              },
-            ],
-          },
-        };
+        // const response = {
+        //   data: {
+        //     statusCode: 200,
+        //     message: "Schemes fetched successfully",
+        //     data: [
+        //       {
+        //         Scheme_fk: 1,
+        //         Scheme_name: "Health Insurance Scheme",
+        //         Description:
+        //           "Provides free health insurance for low-income citizens.",
+        //         Application_deadline: "2025-03-31",
+        //         status: "APPROVED",
+        //       },
+        //       {
+        //         Scheme_fk: 2,
+        //         Scheme_name: "Educational Grant",
+        //         Description:
+        //           "Scholarship for students pursuing higher education.",
+        //         Application_deadline: "2025-06-15",
+        //         status: undefined, // Not applied yet
+        //       },
+        //       {
+        //         Scheme_fk: 3,
+        //         Scheme_name: "Housing Assistance",
+        //         Description:
+        //           "Financial support for housing and rent subsidies.",
+        //         Application_deadline: "2024-12-01",
+        //         status: "PENDING",
+        //       },
+        //     ],
+        //   },
+        // };
 
         // Handling API response
         if (response.data.statusCode === 200) {
@@ -91,22 +89,14 @@ const CitizenWelfSchemes: React.FC = () => {
        * This will send an actual application request.
        */
 
-      // const response = await api.post("/citizen/welfare-enrol", {
-      //   JWT: your_jwt_token,
-      //   Scheme_id: schemeId,
-      // });
-
-      // Mock response for testing
-      const response = {
-        data: {
-          status: "PENDING",
-          message: "Application submitted successfully!",
-          statusCode: 200,
+      const response = await api.post('/citizen/welfare-enrol', null, {
+        params: {
+          Scheme_id: schemeId,
         },
-      };
+      });
 
       // Handling application response
-      if (response.data.statusCode === 200) {
+      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
         setApplyMessage(response.data.message);
         // Update UI to reflect applied status
         setSchemes((prevSchemes) =>
@@ -176,7 +166,7 @@ const CitizenWelfSchemes: React.FC = () => {
                 </td>
                 <td>
                   {/* Show "Apply" button only if not applied yet */}
-                  {!scheme.status && (
+                  {scheme.status === "NOT_APPLIED" && (
                     <Button
                       variant="primary"
                       size="sm"
@@ -186,7 +176,7 @@ const CitizenWelfSchemes: React.FC = () => {
                     </Button>
                   )}
                   {/* Show disabled button if already applied */}
-                  {scheme.status && (
+                  {scheme.status !== "NOT_APPLIED" && (
                     <Button variant="secondary" size="sm" disabled>
                       Applied
                     </Button>

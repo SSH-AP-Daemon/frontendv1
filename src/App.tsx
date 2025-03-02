@@ -29,9 +29,9 @@ function App() {
         <Route path="/citizen/assets" element={<CitizenAssets />} />
         <Route path="/citizen/family" element={<CitizenFamily />} />
         <Route path="/citizen/issues" element={<CitizenIssues />} />
-        <Route path="/citizen/docs" element={<CitizenDocuments />} />
+        <Route path="/citizen/documents" element={<CitizenDocuments />} />
         <Route path="/citizen/finances" element={<CitizenFinances />} />
-        <Route path="/citizen/welfSchemes" element={<CitizenWelfSchemes />} />
+        <Route path="/citizen/welfare" element={<CitizenWelfSchemes />} />
         <Route path="/citizen/profile" element={<CitizenProfile />} />
         <Route path="/employee/profile" element={<EmployeeProfile />} />
         <Route path="/employee/assets" element={<EmployeeAssets />} />

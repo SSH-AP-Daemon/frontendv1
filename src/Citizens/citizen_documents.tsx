@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 // import api from "../api/axiosConfig.tsx";
 import { Eye, DownloadCloud } from "lucide-react";
+import api from "../../api/axiosConfig.tsx";
 
 interface Document {
   Type: string;
@@ -25,17 +26,7 @@ const CitizenDocuments: React.FC = () => {
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const response = {
-          data: {
-            statusCode: 200,
-            message: "Documents fetched successfully",
-            data: [
-              { Type: "Passport", Pdf_data: "JVBERi0xLjcKJeLjz9MK..." },
-              { Type: "Aadhar Card", Pdf_data: "JVBERi0xLjcKJeLjz9MK..." },
-              { Type: "Voter ID", Pdf_data: "JVBERi0xLjcKJeLjz9MK..." },
-            ],
-          },
-        };
+        const response = await api.get("/citizen/document");
 
         if (response.data.statusCode === 200) {
           setDocuments(response.data.data);
