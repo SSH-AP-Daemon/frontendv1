@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../AuthContext";
-import { Button, Form, Table, Alert } from "react-bootstrap";
+import { Button, Form, Table, Alert, Modal } from "react-bootstrap";
+import api from "../../api/axiosConfig";
 
 // Define Types
 interface Infrastructure {
@@ -19,6 +20,12 @@ const EmployeeInfrastructure: React.FC = () => {
   const [infrastructure, setInfrastructure] = useState<Infrastructure[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Modal state
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedInfraId, setSelectedInfraId] = useState<number | null>(null);
+  const [newActualCost, setNewActualCost] = useState<number>(0);
+  const [updateLoading, setUpdateLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (role !== "INFRASTRUCTURE") {
@@ -52,30 +59,60 @@ const EmployeeInfrastructure: React.FC = () => {
 
   const fetchInfrastructure = async () => {
     try {
-      setLoading(true);
-      // const response = await axios.get("/panchayat-employee/infrastructure");
-      let response = { data: { data: mockInfrastructure } }; // Mock response
+      setLoading(true);      
+      // Include the token in the Authorization header
+      const response = await api.get("/panchayat-employee/infrastructure");
+      
+      // let response = { data: { data: mockInfrastructure } }; // Mock response
       setInfrastructure(response.data.data);
     } catch (err) {
+      console.error("Error fetching infrastructure:", err);
       setError("Failed to fetch infrastructure projects.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateActualCost = async (
-    infraId: number,
-    actualCost: number
-  ) => {
+  const handleOpenUpdateModal = (infraId: number, currentCost: number) => {
+    setSelectedInfraId(infraId);
+    setNewActualCost(currentCost);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedInfraId(null);
+    setNewActualCost(0);
+  };
+
+  const handleUpdateActualCost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedInfraId) return;
+    
     try {
-      await axios.patch("/panchayat-employee/infrastructure", {
-        Infra_id: infraId,
-        actual_cost: actualCost,
+      setUpdateLoading(true);
+      setError(null);
+      
+      await api.put("/panchayat-employee/infrastructure", {
+        Infra_id: selectedInfraId,
+        actual_cost: newActualCost,
       });
-      fetchInfrastructure();
+      
+      // Close modal and refresh data
+      handleCloseModal();
+      await fetchInfrastructure();
+      
     } catch (err) {
-      setError("Failed to update actual cost.");
+      console.error("Error updating infrastructure cost:", err);
+      setError("Failed to update actual cost. Please try again.");
+    } finally {
+      setUpdateLoading(false);
     }
+  };
+
+  const getInfraNameById = (infraId: number): string => {
+    const infra = infrastructure.find(item => item.Infra_id === infraId);
+    return infra ? infra.Description : `Project #${infraId}`;
   };
 
   return (
@@ -110,12 +147,7 @@ const EmployeeInfrastructure: React.FC = () => {
                 <td>
                   <Button
                     variant="primary"
-                    onClick={() =>
-                      handleUpdateActualCost(
-                        infra.Infra_id,
-                        infra.Actual_cost + 5000
-                      )
-                    }
+                    onClick={() => handleOpenUpdateModal(infra.Infra_id, infra.Actual_cost)}
                   >
                     Update Cost
                   </Button>
@@ -125,6 +157,45 @@ const EmployeeInfrastructure: React.FC = () => {
           </tbody>
         </Table>
       )}
+
+      {/* Update Cost Modal */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Update Actual Cost</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleUpdateActualCost}>
+          <Modal.Body>
+            <p>Updating actual cost for: <strong>{selectedInfraId ? getInfraNameById(selectedInfraId) : ''}</strong></p>
+            <Form.Group className="mb-3">
+              <Form.Label>Infrastructure ID</Form.Label>
+              <Form.Control
+                type="number"
+                value={selectedInfraId || ''}
+                disabled
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>New Actual Cost</Form.Label>
+              <Form.Control
+                type="number"
+                value={newActualCost}
+                onChange={(e) => setNewActualCost(Number(e.target.value))}
+                required
+                min={0}
+                step={0.01}
+              />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" disabled={updateLoading}>
+              {updateLoading ? 'Updating...' : 'Update Cost'}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </div>
   );
 };
