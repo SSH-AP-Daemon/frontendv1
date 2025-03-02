@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import { useAuth } from "../AuthContext";
 import { Table, Button, Form, Modal, Alert } from "react-bootstrap";
-
-// Dummy Data for Testing
-const sampleAssets = [
-  { Asset_id: 1, Type: "Land", Valuation: 50000, User_name: "john_doe" },
-  { Asset_id: 2, Type: "Vehicle", Valuation: 15000, User_name: "john_doe" },
-  { Asset_id: 3, Type: "House", Valuation: 120000, User_name: "john_doe" },
-];
 
 interface Asset {
   Asset_id: number;
@@ -48,15 +41,14 @@ const EmployeeAssets: React.FC = () => {
   const fetchAssets = async () => {
     try {
       setLoading(true);
-      //   const response = await axios.get(
-      //     `/panchayat-employee/assets/${userName}`,
-      //     {
-      //       headers: { Authorization: `Bearer YOUR_JWT_TOKEN` },
-      //     }
-      //   );
-      let response = { data: { data: sampleAssets } };
-      setAssets(response.data.data);
-      setFilteredAssets(response.data.data); // Initially, filtered list = all assets
+      const response = await api.get(
+        `/panchayat-employee/assets/${userName}`
+      );
+      console.log(response);
+
+      // let response = { data: { data: sampleAssets } };
+      setAssets(response.data);
+      setFilteredAssets(response.data); // Initially, filtered list = all assets
     } catch (err) {
       setError("Failed to fetch assets.");
     } finally {
@@ -105,12 +97,9 @@ const EmployeeAssets: React.FC = () => {
       };
 
       if (editingAsset) {
-        await axios.put("/panchayat-employee/assets", {
-          ...payload,
-          Asset_id: editingAsset.Asset_id,
-        });
+        await api.put(`/panchayat-employee/assets/${editingAsset.Asset_id}`, payload);
       } else {
-        await axios.post("/panchayat-employee/assets", payload);
+        await api.post("/panchayat-employee/assets", payload);
       }
 
       setShowModal(false);
@@ -125,10 +114,7 @@ const EmployeeAssets: React.FC = () => {
   // Delete asset
   const handleDeleteAsset = async (assetId: number) => {
     try {
-      await axios.delete("/panchayat-employee/assets", {
-        data: { Asset_id: assetId },
-        headers: { Authorization: `Bearer YOUR_JWT_TOKEN` },
-      });
+      await api.delete(`/panchayat-employee/assets/${assetId}`);
       fetchAssets();
     } catch (err) {
       setError("Failed to delete asset.");

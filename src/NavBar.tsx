@@ -21,6 +21,10 @@ const NavBar: React.FC = () => {
 
   const logout = () => {
     // call logout API //TODO
+    localStorage.removeItem("userType");
+    localStorage.removeItem("role");
+    // localStorage.removeItem("jwtToken");
+    // localStorage.removeItem("userName");
     setUserType("notLoggedIn");
     navigate("/");
   };
@@ -34,18 +38,6 @@ const NavBar: React.FC = () => {
         <Navbar.Toggle aria-controls="navbarNav" />
         <Navbar.Collapse id="navbarNav">
           <Nav className="me-auto">
-            {/* Not Logged In */}
-            {userType === "notLoggedIn" && (
-              <>
-                <Nav.Link as={Link} to="/signup">
-                  Sign Up
-                </Nav.Link>
-                <Nav.Link as={Link} to="/signin">
-                  Sign In
-                </Nav.Link>
-              </>
-            )}
-
             {/* Citizen Navigation */}
             {userType === "CITIZEN" && (
               <>
@@ -157,11 +149,25 @@ const NavBar: React.FC = () => {
 
           {/* Common: Profile & Logout */}
           {userType !== "notLoggedIn" && (
-            <Nav>
+            <Nav className="ms-auto">
               <Nav.Link as={Link} to="/" onClick={logout}>
                 Logout
               </Nav.Link>
             </Nav>
+          )}
+
+          {/* Not Logged In */}
+          {userType === "notLoggedIn" && (
+            <>
+              <Nav className="ms-auto">
+                <Nav.Link as={Link} to="/signup">
+                  Sign Up
+                </Nav.Link>
+                <Nav.Link as={Link} to="/signin">
+                  Sign In
+                </Nav.Link>
+              </Nav>
+            </>
           )}
         </Navbar.Collapse>
       </Container>

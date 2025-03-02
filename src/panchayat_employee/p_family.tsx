@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
-// import axios from "axios";
+import axios from "axios";
 import { useAuth } from "../AuthContext";
 import { Table, Button, Form, Modal, Alert } from "react-bootstrap";
 
 // Dummy Data for Testing
-const sampleFamilies = [
-  {
-    family_id: 1,
-    head_citizen_id: 101,
-    members: [
-      { member_citizen_id: 201, member_user_name: "alice_doe" },
-      { member_citizen_id: 202, member_user_name: "bob_doe" },
-    ],
-  },
-  {
-    family_id: 2,
-    head_citizen_id: 102,
-    members: [{ member_citizen_id: 203, member_user_name: "charlie_doe" }],
-  },
-];
+// const sampleFamilies = [
+//   {
+//     family_id: 1,
+//     head_citizen_id: 101,
+//     members: [
+//       { member_citizen_id: 201, member_user_name: "alice_doe" },
+//       { member_citizen_id: 202, member_user_name: "bob_doe" },
+//     ],
+//   },
+//   {
+//     family_id: 2,
+//     head_citizen_id: 102,
+//     members: [{ member_citizen_id: 203, member_user_name: "charlie_doe" }],
+//   },
+// ];
 
 interface Family {
   family_id: number;
@@ -49,8 +49,11 @@ const EmployeeFamily: React.FC = () => {
   const fetchFamilies = async () => {
     try {
       setLoading(true);
-      // const response = await axios.get(`/panchayat-employee/family/${userName}`, { headers: { Authorization: `Bearer YOUR_JWT_TOKEN` } });
-      let response = { data: { data: sampleFamilies } };
+      const response = await axios.get(
+        `/panchayat-employee/family/${userName}`,
+        { headers: { Authorization: `Bearer YOUR_JWT_TOKEN` } }
+      );
+      // let response = { data: { data: sampleFamilies } };
       setFamilies(response.data.data);
     } catch (err) {
       setError("Failed to fetch families.");
@@ -62,7 +65,9 @@ const EmployeeFamily: React.FC = () => {
   // Create new family
   const handleCreateFamily = async () => {
     try {
-      // await axios.post("/panchayat-employee/family", { head_user_name: newFamily.head_user_name });
+      await axios.post("/panchayat-employee/family", {
+        head_user_name: newFamily.head_user_name,
+      });
       setShowModal(false);
       setNewFamily({ head_user_name: "" });
       fetchFamilies();
@@ -74,7 +79,9 @@ const EmployeeFamily: React.FC = () => {
   // Delete family
   const handleDeleteFamily = async (familyId: number) => {
     try {
-      // await axios.delete("/panchayat-employee/family", { data: { family_id: familyId } });
+      await axios.delete("/panchayat-employee/family", {
+        data: { family_id: familyId },
+      });
       fetchFamilies();
     } catch (err) {
       setError("Failed to delete family.");

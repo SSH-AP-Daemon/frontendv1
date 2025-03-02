@@ -23,7 +23,7 @@ const CitizenIssues: React.FC = () => {
   const [newIssue, setNewIssue] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingIssue, setDeletingIssue] = useState<number | null>(null);
-  
+
   const fetchIssues = async () => {
     try {
       // Dummy data for testing
@@ -75,9 +75,14 @@ const CitizenIssues: React.FC = () => {
     if (!newIssue.trim()) return;
 
     try {
-      const response = await api.post("/citizen/issues", { description: newIssue });
+      const response = await api.post("/citizen/issues", {
+        description: newIssue,
+      });
 
-      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
+      if (
+        response.data.statusCode === 200 ||
+        response.data.statusCode === 201
+      ) {
         setIssues([
           ...issues,
           {
@@ -98,7 +103,9 @@ const CitizenIssues: React.FC = () => {
   // Handle Issue Deletion
   const handleDeleteIssue = async (id: number) => {
     try {
-      const response = await api.delete(`/citizen/issue/`, { params: { Issue_id: id } });
+      const response = await api.delete(`/citizen/issue/`, {
+        params: { Issue_id: id },
+      });
 
       if (response.data.statusCode === 200) {
         setIssues(issues.filter((issue) => issue.Issue_id !== id));

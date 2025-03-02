@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Card, ListGroup, Spinner, Alert } from "react-bootstrap";
-import api from "../../api/axiosConfig.tsx"; // Import API configuration
+import api from "../../api/axiosConfig.tsx";
 
-// Define interface for profile data
 interface Profile {
   Date_of_birth: string;
   Date_of_death?: string | null;
@@ -20,44 +19,24 @@ interface Profile {
 }
 
 const CitizenProfile: React.FC = () => {
-  // State to store fetched profile data
   const [profile, setProfile] = useState<Profile | null>(null);
-  // State to handle loading
   const [loading, setLoading] = useState<boolean>(true);
-  // State to handle error messages
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        /**
-         * Uncomment this when backend is ready for testing
-         * This will fetch actual profile data.
-         */
         const response = await api.get("/citizen/profile");
+        console.log("API Response:", response.data); // Add this for debugging
 
-        // Mock API Response for Testing
-        // const response = {
-        //   data: {
-        //     data: {
-        //       Date_of_birth: "1990-05-15",
-        //       Date_of_death: null,
-        //       Gender: "Male" as "Male" | "Female" | "Other", // ✅ Cast to match expected type
-        //       Address: "123, Village Street, District A",
-        //       Educational_qualification:
-        //         "Graduate" as Profile["Educational_qualification"], // ✅ Cast qualification
-        //       Occupation: "Software Engineer",
-        //     },
-        //   },
-        // };
-
-        // Handling API response
-        if (response.data) {
-          setProfile(response.data);
+        // Check if response.data.data exists and set it to profile
+        if (response.data && response.data.data) {
+          setProfile(response.data.data); // Changed this line
         } else {
           setError("Failed to fetch profile details.");
         }
       } catch (err) {
+        console.error("API Error:", err); // Add this for debugging
         setError("Error fetching profile data. Please try again.");
       } finally {
         setLoading(false);
@@ -67,17 +46,19 @@ const CitizenProfile: React.FC = () => {
     fetchProfile();
   }, []);
 
+  // Add this for debugging
+  useEffect(() => {
+    console.log("Current Profile State:", profile);
+  }, [profile]);
+
   return (
     <Container className="mt-4">
       <h2 className="text-center mb-4">Citizen Profile</h2>
 
-      {/* Show loading spinner while fetching data */}
       {loading && <Spinner animation="border" className="d-block mx-auto" />}
 
-      {/* Show error message if fetching fails */}
       {error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Show profile data if available */}
       {!loading && !error && profile && (
         <Card className="shadow-sm">
           <Card.Body>
@@ -111,7 +92,6 @@ const CitizenProfile: React.FC = () => {
         </Card>
       )}
 
-      {/* Show message if no profile data is available */}
       {!loading && !error && !profile && (
         <Alert variant="info">No profile data available.</Alert>
       )}
