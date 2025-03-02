@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import api from "../../api/axiosConfig.tsx";
 import { useAuth } from "../AuthContext";
 import { Button, Form, Table, Alert } from "react-bootstrap";
 
@@ -12,152 +13,147 @@ interface Infrastructure {
   Actual_cost: number;
 }
 
-const GovernmentInfrastructure: React.FC = () => {
+interface ApiResponse {
+  data: Infrastructure[];
+  message: string;
+  statusCode: number;
+}
+
+const GovernmentAgencyInfrastructure: React.FC = () => {
   const { userType, role } = useAuth();
-  const [infrastructure, setInfrastructure] =
-    useState<Infrastructure[]>(mockInfrastructure);
+  const [infrastructures, setInfrastructures] = useState<Infrastructure[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Filters
-  const [searchLocation, setSearchLocation] = useState<string>("");
-  const [newInfra, setNewInfra] = useState<Omit<Infrastructure, "Infra_id">>({
+  const [newInfrastructure, setNewInfrastructure] = useState<{
+    Description: string;
+    Location: string;
+    Funding: number;
+    Actual_cost: number;
+  }>({
     Description: "",
     Location: "",
     Funding: 0,
     Actual_cost: 0,
   });
 
-  useEffect(() => {
-    if (userType !== "GOVERNMENT_AGENCY" || role !== "INFRASTRUCTURE") {
-      setError("You are not authorized to manage infrastructure.");
-      setLoading(false);
-      return;
-    }
-    fetchInfrastructure();
-  }, [role, searchLocation]);
-
-  const fetchInfrastructure = async () => {
+  // Fetch infrastructures from API
+  const fetchInfrastructures = useCallback(async () => {
     try {
       setLoading(true);
-      const params: { location?: string } = {};
-      if (searchLocation) params.location = searchLocation;
-
-      // const response = await axios.get("/government-agency/infrastructure", { params });
-      let response = {
-        data: {
-          data: mockInfrastructure.filter(
-            (i) => !searchLocation || i.Location.includes(searchLocation)
-          ),
-        },
-      }; // Mock response
-      setInfrastructure(response.data.data);
+      setError(null);
+      const response = await api.get<ApiResponse>("/government-agency/infrastructure");
+      if (response.data.statusCode === 200) {
+        setInfrastructures(response.data.data);
+      } else {
+        throw new Error(response.data.message || "Failed to fetch infrastructures");
+      }
     } catch (err) {
-      setError("Failed to fetch infrastructure data.");
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.detail || "Failed to fetch infrastructures.");
+      } else {
+        setError("Failed to fetch infrastructures.");
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleDelete = async (infraId: number) => {
+  useEffect(() => {
+    if (userType !== "GOVERNMENT_AGENCY" || role !== "INFRASTRUCTURE") {
+      setError("You are not authorized to manage infrastructures.");
+      setLoading(false);
+      return;
+    }
+    fetchInfrastructures();
+  }, [userType, role, fetchInfrastructures]);
+
+  // Add new infrastructure
+  const addInfrastructure = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      // await axios.delete("/government-agency/infrastructure", { data: { Infra_id: infraId } });
-      setInfrastructure((prev) => prev.filter((i) => i.Infra_id !== infraId));
+      setError(null);
+      const response = await api.post("/government-agency/infrastructure", newInfrastructure);
+      if (response.data.statusCode === 201) {
+        setNewInfrastructure({ Description: "", Location: "", Funding: 0, Actual_cost: 0 });
+        await fetchInfrastructures();
+      } else {
+        throw new Error(response.data.message || "Failed to add infrastructure");
+      }
     } catch (err) {
-      setError("Failed to delete infrastructure.");
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.detail || "Failed to add infrastructure.");
+      } else {
+        setError("Failed to add infrastructure.");
+      }
     }
   };
 
-  const addInfrastructure = async () => {
+  // Delete infrastructure
+  const deleteInfrastructure = async (infraId: number) => {
     try {
-      // const response = await axios.post("/government-agency/infrastructure", newInfra);
-      let response = {
-        data: { data: { Infra_id: infrastructure.length + 1 } },
-      }; // Mock response
-      setInfrastructure([
-        ...infrastructure,
-        { ...newInfra, Infra_id: response.data.data.Infra_id },
-      ]);
-      setNewInfra({
-        Description: "",
-        Location: "",
-        Funding: 0,
-        Actual_cost: 0,
-      });
+      setError(null);
+      await api.delete("/government-agency/infrastructure", { data: { Infra_id: infraId } });
+      await fetchInfrastructures();
     } catch (err) {
-      setError("Failed to add new infrastructure.");
+      console.log(err);
+      setError("Failed to delete infrastructure.");
     }
   };
 
   return (
     <div className="container mt-4">
-      <h2>Infrastructure Management</h2>
+      <h2>Government Infrastructure</h2>
       {error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Filters */}
-      <Form.Control
-        type="text"
-        placeholder="Search by Location"
-        value={searchLocation}
-        onChange={(e) => setSearchLocation(e.target.value)}
-        className="mb-3"
-      />
-
-      {/* Add Infrastructure */}
       <h4>Add New Infrastructure</h4>
-      <Form>
-        <Form.Group>
+      <Form onSubmit={addInfrastructure} className="mb-4">
+        <Form.Group className="mb-3">
+          <Form.Label>Description</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Description"
-            value={newInfra.Description}
-            onChange={(e) =>
-              setNewInfra({ ...newInfra, Description: e.target.value })
-            }
-            className="mb-2"
+            placeholder="Enter description"
+            value={newInfrastructure.Description}
+            onChange={(e) => setNewInfrastructure({ ...newInfrastructure, Description: e.target.value })}
+            required
           />
-          <Form.Control
-            type="text"
-            placeholder="Location"
-            value={newInfra.Location}
-            onChange={(e) =>
-              setNewInfra({ ...newInfra, Location: e.target.value })
-            }
-            className="mb-2"
-          />
-          <Form.Control
-            type="number"
-            placeholder="Funding"
-            value={newInfra.Funding || ""}
-            onChange={(e) =>
-              setNewInfra({
-                ...newInfra,
-                Funding: parseFloat(e.target.value) || 0,
-              })
-            }
-            className="mb-2"
-          />
-          <Form.Control
-            type="number"
-            placeholder="Actual Cost"
-            value={newInfra.Actual_cost || ""}
-            onChange={(e) =>
-              setNewInfra({
-                ...newInfra,
-                Actual_cost: parseFloat(e.target.value) || 0,
-              })
-            }
-            className="mb-2"
-          />
-          <Button onClick={addInfrastructure}>Add Infrastructure</Button>
         </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Location</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter location"
+            value={newInfrastructure.Location}
+            onChange={(e) => setNewInfrastructure({ ...newInfrastructure, Location: e.target.value })}
+            required
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Funding</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Enter funding amount"
+            value={newInfrastructure.Funding}
+            onChange={(e) => setNewInfrastructure({ ...newInfrastructure, Funding: Number(e.target.value) })}
+            required
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Actual Cost</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Enter actual cost"
+            value={newInfrastructure.Actual_cost}
+            onChange={(e) => setNewInfrastructure({ ...newInfrastructure, Actual_cost: Number(e.target.value) })}
+            required
+          />
+        </Form.Group>
+        <Button type="submit" variant="primary">Add Infrastructure</Button>
       </Form>
 
-      {/* Infrastructure Table */}
       {loading ? (
-        <p>Loading...</p>
+        <div className="text-center"><p>Loading infrastructures...</p></div>
       ) : (
-        <Table striped bordered hover>
+        <Table striped bordered hover responsive>
           <thead>
             <tr>
               <th>#</th>
@@ -169,7 +165,7 @@ const GovernmentInfrastructure: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {infrastructure.map((infra, index) => (
+            {infrastructures.map((infra, index) => (
               <tr key={infra.Infra_id}>
                 <td>{index + 1}</td>
                 <td>{infra.Description}</td>
@@ -177,15 +173,15 @@ const GovernmentInfrastructure: React.FC = () => {
                 <td>{infra.Funding}</td>
                 <td>{infra.Actual_cost}</td>
                 <td>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleDelete(infra.Infra_id)}
-                  >
-                    Delete
-                  </Button>
+                  <Button variant="danger" onClick={() => deleteInfrastructure(infra.Infra_id)}>Delete</Button>
                 </td>
               </tr>
             ))}
+            {infrastructures.length === 0 && !loading && (
+              <tr>
+                <td colSpan={6} className="text-center">No infrastructures found</td>
+              </tr>
+            )}
           </tbody>
         </Table>
       )}
@@ -193,29 +189,4 @@ const GovernmentInfrastructure: React.FC = () => {
   );
 };
 
-export default GovernmentInfrastructure;
-
-// Mock Data
-const mockInfrastructure: Infrastructure[] = [
-  {
-    Infra_id: 1,
-    Description: "Bridge Construction",
-    Location: "Town A",
-    Funding: 500000,
-    Actual_cost: 450000,
-  },
-  {
-    Infra_id: 2,
-    Description: "Water Supply System",
-    Location: "Village B",
-    Funding: 200000,
-    Actual_cost: 180000,
-  },
-  {
-    Infra_id: 3,
-    Description: "School Renovation",
-    Location: "City C",
-    Funding: 300000,
-    Actual_cost: 250000,
-  },
-];
+export default GovernmentAgencyInfrastructure;
