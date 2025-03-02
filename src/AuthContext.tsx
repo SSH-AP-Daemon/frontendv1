@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [userType, setUserType] = useState(() => {
     const storedUserType = localStorage.getItem("userType");
-    return storedUserType || "PANCHAYAT_EMPLOYEE";
+    return storedUserType || "notLoggedIn";
   });
 
   const [userId, setUserId] = useState(() => {

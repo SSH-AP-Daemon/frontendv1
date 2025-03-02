@@ -128,11 +128,8 @@ const NavBar: React.FC = () => {
             {/* Admin Navigation */}
             {userType === "ADMIN" && (
               <>
-                <Nav.Link as={Link} to="/view">
-                  View
-                </Nav.Link>
-                <Nav.Link as={Link} to="/activity_log">
-                  Activity Log
+                <Nav.Link as={Link} to="/admin">
+                  Workspace
                 </Nav.Link>
               </>
             )}
@@ -140,15 +137,20 @@ const NavBar: React.FC = () => {
             {/* Government Agency Navigation */}
             {userType === "GOVERNMENT_AGENCY" && (
               <>
-                <Nav.Link as={Link} to="/view">
-                  View
-                </Nav.Link>
-                <Nav.Link as={Link} to="/create">
-                  Create
-                </Nav.Link>
-                <Nav.Link as={Link} to="/edit">
-                  Edit
-                </Nav.Link>
+                {role === "WELFARE_SCHEME" && (
+                  <>
+                    <Nav.Link as={Link} to="/govt_welf">
+                      WorkSpace
+                    </Nav.Link>
+                  </>
+                )}
+                {role === "INFRASTRUCTURE" && (
+                  <>
+                    <Nav.Link as={Link} to="/govt_infra">
+                      WorkSpace
+                    </Nav.Link>
+                  </>
+                )}
               </>
             )}
           </Nav>

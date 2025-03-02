@@ -39,8 +39,11 @@ export default function Home() {
     <>
       <Container fluid className="text-center main-container">
         <Stack>
+          <h3>Welcome to </h3>
+          <h1>SSH AP Daemon Village</h1>
+          <h2></h2>
           <h3>Environmental Data</h3>
-          <Row className="mt-4" gap={2}>
+          <Row className="mt-4" noGutters gap={2}>
             <Col>
               <Card className="chart-card">
                 <Card.Body>
@@ -91,7 +94,7 @@ export default function Home() {
           </Row>
 
           <h3>Census Data</h3>
-          <Row className="mt-4" gap={100}>
+          <Row className="mt-4" noGutters gap={2}>
             <Col>
               <Card className="chart-card">
                 <Card.Body>
