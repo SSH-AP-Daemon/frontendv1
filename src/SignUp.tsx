@@ -123,7 +123,7 @@ const SignUp: React.FC = () => {
       }
       const response = await api.post("user/register", data); // Axios call
 
-      setUserType(response.data.User_type); // Update global state
+      // setUserType(response.data.User_type); // Update global state
       console.log("User registered in as:", response.data.userType);
 
       // Navigate to the Home page after successful registration
@@ -370,14 +370,14 @@ const SignUp: React.FC = () => {
                       required
                     >
                       <option value="">Select Role</option>
-                      <option value="Asset_Mang">Asset Manager</option>
-                      <option value="Family_Mang">Family Manager</option>
-                      <option value="Issue_Mang">Issue Manager</option>
-                      <option value="Doc_Mang">Document Manager</option>
-                      <option value="Finance_Mang">Finance Manager</option>
-                      <option value="Welfare_Mang">Welfare Manager</option>
-                      <option value="Infra_Mang">Infrastructure Manager</option>
-                      <option value="Env_Mang">Environment Manager</option>
+                      <option value="ASSET">Asset Manager</option>
+                      <option value="FAMILY">Family Manager</option>
+                      <option value="ISSUES">Issue Manager</option>
+                      <option value="DOCUMENT">Document Manager</option>
+                      <option value="FINANCIAL_DATA">Finance Manager</option>
+                      <option value="WELFARE_SCHEME">Welfare Manager</option>
+                      <option value="INFRASTRUCTURE">Infrastructure Manager</option>
+                      <option value="ENVIRONMENTAL_DATA">Environment Manager</option>
                     </Form.Select>
                   </Form.Group>
                 </>
@@ -393,8 +393,8 @@ const SignUp: React.FC = () => {
                     required
                   >
                     <option value="">Select Role</option>
-                    <option value="Welfare_Agency">Welfare Agency</option>
-                    <option value="Infrastructure_Agency">
+                    <option value="WELFARE_SCHEME">Welfare Agency</option>
+                    <option value="INFRASTRUCTURE">
                       Infrastructure Agency
                     </option>
                   </Form.Select>

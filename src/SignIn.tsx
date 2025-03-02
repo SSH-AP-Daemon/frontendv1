@@ -58,7 +58,7 @@ const SignIn: React.FC = () => {
 
     try {
       const response = await api.post("/user/login", formData);
-      const User_type = response.data.User_type;
+      const User_type = response.data.user_type;
       setUserType(User_type); // Update global state
 
       const Role = response.data.Role || "";
