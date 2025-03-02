@@ -58,6 +58,7 @@ const SignIn: React.FC = () => {
 
     try {
       const response = await api.post("/user/login", formData);
+      console.log(response);
       const User_type = response.data.user_type;
       localStorage.setItem("userType", User_type);
       setUserType(User_type);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "../AuthContext";
 import { Button, Table, Form, Alert } from "react-bootstrap";
+import api from "../../api/axiosConfig.tsx";
 
 const AdminDashboard: React.FC = () => {
   const { userType } = useAuth();
@@ -27,9 +27,8 @@ const AdminDashboard: React.FC = () => {
       if (userTypeFilter) params.User_type = userTypeFilter;
       if (isVerifiedFilter) params.Is_verified = isVerifiedFilter;
 
-      // const response = await axios.get("/admin/user", { params });
-      let response = { data: { data: mockUsers } }; // Mock response
-      setUsers(response.data.data);
+      const response = await api.get("/admin/users");
+      setUsers(response.data);
     } catch (err) {
       setError("Failed to fetch users.");
     }
@@ -45,23 +44,19 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteUser = async (userId: number) => {
+  const handleDeleteUser = async (User_name: string) => {
     try {
-      // await axios.delete("/admin/user", { data: { User_id: userId } });
-      setUsers(users.filter((user) => user.User_id !== userId));
+      await api.delete(`/admin/delete/${User_name}`, { data: { user_name: User_name } });
+      fetchUsers();
     } catch (err) {
       setError("Failed to delete user.");
     }
   };
 
-  const handleVerifyUser = async (userId: number, validation: boolean) => {
+  const handleVerifyUser = async (User_name: string, validation: boolean) => {
     try {
-      // await axios.put(`/admin/verify/${userId}`, { User_id: userId, validation });
-      setUsers(
-        users.map((user) =>
-          user.User_id === userId ? { ...user, Is_verified: validation } : user
-        )
-      );
+      await api.put(`/admin/verify/${User_name}`, { user_name: User_name, validation });
+      fetchUsers();
     } catch (err) {
       setError("Failed to verify user.");
     }
@@ -105,7 +100,7 @@ const AdminDashboard: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {users
+          { users && users
             .sort((a, b) => (a[sortBy] > b[sortBy] ? 1 : -1))
             .map((user) => (
               <tr key={user.User_id}>
@@ -117,13 +112,13 @@ const AdminDashboard: React.FC = () => {
                 <td>
                   <Button
                     variant="success"
-                    onClick={() => handleVerifyUser(user.User_id, true)}
+                    onClick={() => handleVerifyUser(user.User_name, true)}
                   >
                     Verify
                   </Button>{" "}
                   <Button
                     variant="danger"
-                    onClick={() => handleDeleteUser(user.User_id)}
+                    onClick={() => handleDeleteUser(user.User_name)}
                   >
                     Delete
                   </Button>
