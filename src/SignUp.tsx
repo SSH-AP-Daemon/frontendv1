@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Card } from "react-bootstrap";
-import { useAuth } from "./AuthContext";
+// import { useAuth } from "./AuthContext";
 import api from "../api/axiosConfig.tsx";
 import { useNavigate } from "react-router-dom";
 
 const SignUp: React.FC = () => {
-  const { setUserType } = useAuth();
+  // const { setUserType } = useAuth();
   const [formData, setFormData] = useState({
     User_name: "",
     Password: "",
@@ -28,6 +28,10 @@ const SignUp: React.FC = () => {
 
   // Initialize the navigate function
   const navigate = useNavigate();
+
+  const handleBack = () => {
+    setStep(1);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -376,8 +380,12 @@ const SignUp: React.FC = () => {
                       <option value="DOCUMENT">Document Manager</option>
                       <option value="FINANCIAL_DATA">Finance Manager</option>
                       <option value="WELFARE_SCHEME">Welfare Manager</option>
-                      <option value="INFRASTRUCTURE">Infrastructure Manager</option>
-                      <option value="ENVIRONMENTAL_DATA">Environment Manager</option>
+                      <option value="INFRASTRUCTURE">
+                        Infrastructure Manager
+                      </option>
+                      <option value="ENVIRONMENTAL_DATA">
+                        Environment Manager
+                      </option>
                     </Form.Select>
                   </Form.Group>
                 </>
@@ -401,9 +409,14 @@ const SignUp: React.FC = () => {
                 </Form.Group>
               )}
 
-              <Button variant="success" type="submit" className="w-100 mt-4">
-                Submit
-              </Button>
+              <div className="d-flex justify-content-between mt-4">
+                <Button variant="secondary" onClick={handleBack}>
+                  Back
+                </Button>
+                <Button variant="success" type="submit">
+                  Submit
+                </Button>
+              </div>
             </>
           )}
         </Form>

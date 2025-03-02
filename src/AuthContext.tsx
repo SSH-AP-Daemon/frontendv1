@@ -19,10 +19,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [userType, setUserType] = useState("PANCHAYAT_EMPLOYEE");
+  const [userType, setUserType] = useState("notLoggedIn");
   const [userId, setUserId] = useState(0);
   const [userName, setUserName] = useState("");
-  const [role, setRole] = useState("FIANNCIAL_DATA");
+  const [role, setRole] = useState("");
 
   return (
     <AuthContext.Provider

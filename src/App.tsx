@@ -1,4 +1,5 @@
 // import { useState } from "react";
+import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./NavBar";
 import SignUp from "./SignUp";
@@ -18,6 +19,13 @@ import EmployeeFamily from "./panchayat_employee/p_family";
 import EmployeeIssues from "./panchayat_employee/p_issues";
 import EmployeeDocuments from "./panchayat_employee/p_document";
 import EmployeeFinance from "./panchayat_employee/p_finance";
+import EmployeeWelfScheme from "./panchayat_employee/p_welfare";
+import EmployeeInfrastructure from "./panchayat_employee/p_infra";
+import EmployeeEnvironment from "./panchayat_employee/p_env";
+import AdminDashboard from "./Admin/admin";
+import GovernmentAgencyProfile from "./govt_agency/govt_profile";
+import GovernmentAgencyWelfare from "./govt_agency/govt_welf";
+import GovernmentInfrastructure from "./govt_agency/govt_infra";
 
 function App() {
   return (
@@ -31,7 +39,7 @@ function App() {
         <Route path="/citizen/issues" element={<CitizenIssues />} />
         <Route path="/citizen/docs" element={<CitizenDocuments />} />
         <Route path="/citizen/finances" element={<CitizenFinances />} />
-        <Route path="/citizen/welfSchemes" element={<CitizenWelfSchemes />} />
+        <Route path="/citizen/welfschemes" element={<CitizenWelfSchemes />} />
         <Route path="/citizen/profile" element={<CitizenProfile />} />
         <Route path="/employee/profile" element={<EmployeeProfile />} />
         <Route path="/employee/assets" element={<EmployeeAssets />} />
@@ -39,6 +47,17 @@ function App() {
         <Route path="/employee/issues" element={<EmployeeIssues />} />
         <Route path="/employee/documents" element={<EmployeeDocuments />} />
         <Route path="/employee/finances" element={<EmployeeFinance />} />
+        <Route path="/employee/welfschemes" element={<EmployeeWelfScheme />} />
+        <Route path="/employee/environment" element={<EmployeeEnvironment />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/govt/profile" element={<GovernmentAgencyProfile />} />
+        <Route path="/govt_welf" element={<GovernmentAgencyWelfare />} />
+        <Route path="/govt_infra" element={<GovernmentInfrastructure />} />
+
+        <Route
+          path="/employee/infrastructure"
+          element={<EmployeeInfrastructure />}
+        />
         <Route
           path="/citizen/infrastructure"
           element={<CitizenInfrastructure />}
