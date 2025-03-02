@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table, Spinner, Alert, Button, Form } from "react-bootstrap";
+import {
+  Container,
+  Table,
+  Spinner,
+  Alert,
+  Button,
+  Form,
+} from "react-bootstrap";
 import api from "../../api/axiosConfig";
 
 // Define interfaces for type safety
@@ -40,7 +47,9 @@ const CitizenInfrastructure: React.FC = () => {
         if (response.data.statusCode === 200) {
           setInfrastructure(response.data.data);
         } else {
-          setError(response.data.message || "Failed to fetch infrastructure details.");
+          setError(
+            response.data.message || "Failed to fetch infrastructure details."
+          );
         }
       } catch (err: any) {
         if (err.response?.status === 401) {
@@ -148,17 +157,35 @@ const CitizenInfrastructure: React.FC = () => {
         <Table striped bordered hover responsive className="shadow-sm">
           <thead className="table-dark">
             <tr>
-              <th onClick={() => handleSort("Description")} style={{ cursor: "pointer" }}>
-                Description {sortField === "Description" && (sortOrder === "asc" ? "↑" : "↓")}
+              <th
+                onClick={() => handleSort("Description")}
+                style={{ cursor: "pointer" }}
+              >
+                Description{" "}
+                {sortField === "Description" &&
+                  (sortOrder === "asc" ? "↑" : "↓")}
               </th>
-              <th onClick={() => handleSort("Location")} style={{ cursor: "pointer" }}>
-                Location {sortField === "Location" && (sortOrder === "asc" ? "↑" : "↓")}
+              <th
+                onClick={() => handleSort("Location")}
+                style={{ cursor: "pointer" }}
+              >
+                Location{" "}
+                {sortField === "Location" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
-              <th onClick={() => handleSort("Funding")} style={{ cursor: "pointer" }}>
-                Funding Allocated {sortField === "Funding" && (sortOrder === "asc" ? "↑" : "↓")}
+              <th
+                onClick={() => handleSort("Funding")}
+                style={{ cursor: "pointer" }}
+              >
+                Funding Allocated{" "}
+                {sortField === "Funding" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
-              <th onClick={() => handleSort("Actual_cost")} style={{ cursor: "pointer" }}>
-                Actual Cost {sortField === "Actual_cost" && (sortOrder === "asc" ? "↑" : "↓")}
+              <th
+                onClick={() => handleSort("Actual_cost")}
+                style={{ cursor: "pointer" }}
+              >
+                Actual Cost{" "}
+                {sortField === "Actual_cost" &&
+                  (sortOrder === "asc" ? "↑" : "↓")}
               </th>
             </tr>
           </thead>

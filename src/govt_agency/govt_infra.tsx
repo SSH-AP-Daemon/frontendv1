@@ -14,12 +14,19 @@ interface Infrastructure {
 
 const GovernmentInfrastructure: React.FC = () => {
   const { userType, role } = useAuth();
-  const [infrastructure, setInfrastructure] = useState<Infrastructure[]>([]);
+  const [infrastructure, setInfrastructure] =
+    useState<Infrastructure[]>(mockInfrastructure);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Filters
   const [searchLocation, setSearchLocation] = useState<string>("");
+  const [newInfra, setNewInfra] = useState<Omit<Infrastructure, "Infra_id">>({
+    Description: "",
+    Location: "",
+    Funding: 0,
+    Actual_cost: 0,
+  });
 
   useEffect(() => {
     if (userType !== "GOVERNMENT_AGENCY" || role !== "INFRASTRUCTURE") {
@@ -61,6 +68,27 @@ const GovernmentInfrastructure: React.FC = () => {
     }
   };
 
+  const addInfrastructure = async () => {
+    try {
+      // const response = await axios.post("/government-agency/infrastructure", newInfra);
+      let response = {
+        data: { data: { Infra_id: infrastructure.length + 1 } },
+      }; // Mock response
+      setInfrastructure([
+        ...infrastructure,
+        { ...newInfra, Infra_id: response.data.data.Infra_id },
+      ]);
+      setNewInfra({
+        Description: "",
+        Location: "",
+        Funding: 0,
+        Actual_cost: 0,
+      });
+    } catch (err) {
+      setError("Failed to add new infrastructure.");
+    }
+  };
+
   return (
     <div className="container mt-4">
       <h2>Infrastructure Management</h2>
@@ -74,6 +102,56 @@ const GovernmentInfrastructure: React.FC = () => {
         onChange={(e) => setSearchLocation(e.target.value)}
         className="mb-3"
       />
+
+      {/* Add Infrastructure */}
+      <h4>Add New Infrastructure</h4>
+      <Form>
+        <Form.Group>
+          <Form.Control
+            type="text"
+            placeholder="Description"
+            value={newInfra.Description}
+            onChange={(e) =>
+              setNewInfra({ ...newInfra, Description: e.target.value })
+            }
+            className="mb-2"
+          />
+          <Form.Control
+            type="text"
+            placeholder="Location"
+            value={newInfra.Location}
+            onChange={(e) =>
+              setNewInfra({ ...newInfra, Location: e.target.value })
+            }
+            className="mb-2"
+          />
+          <Form.Control
+            type="number"
+            placeholder="Funding"
+            value={newInfra.Funding || ""}
+            onChange={(e) =>
+              setNewInfra({
+                ...newInfra,
+                Funding: parseFloat(e.target.value) || 0,
+              })
+            }
+            className="mb-2"
+          />
+          <Form.Control
+            type="number"
+            placeholder="Actual Cost"
+            value={newInfra.Actual_cost || ""}
+            onChange={(e) =>
+              setNewInfra({
+                ...newInfra,
+                Actual_cost: parseFloat(e.target.value) || 0,
+              })
+            }
+            className="mb-2"
+          />
+          <Button onClick={addInfrastructure}>Add Infrastructure</Button>
+        </Form.Group>
+      </Form>
 
       {/* Infrastructure Table */}
       {loading ? (

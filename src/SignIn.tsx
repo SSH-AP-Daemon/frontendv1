@@ -58,14 +58,23 @@ const SignIn: React.FC = () => {
 
     try {
       const response = await api.post("/user/login", formData);
-      console.log(response);
+      // console.log(response);
+      if (response.status !== 200) {
+        throw new Error(response.data.detail);
+      }
       const User_type = response.data.user_type;
       localStorage.setItem("userType", User_type);
       setUserType(User_type);
 
+      // console.log("User_type");
+      // console.log(User_type);
+
       const Role = response.data.Role || "";
       localStorage.setItem("role", Role);
       setRole(Role);
+
+      // console.log("Role");
+      // console.log(Role);
 
       const userName = response.data.username;
       localStorage.setItem("userName", userName);
@@ -79,7 +88,8 @@ const SignIn: React.FC = () => {
       console.log(response);
       navigate("/"); // Redirect to home
     } catch (err: any) {
-      setErrors(err.response?.data?.message || "Invalid credentials!");
+      alert(err.response?.data?.detail || "Invalid credentials!");
+      setErrors(err.response?.data?.detail || "Invalid credentials!");
     }
   };
 

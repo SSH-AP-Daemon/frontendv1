@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Container, Spinner, Alert } from "react-bootstrap";
-// import api from "../api/axiosConfig.tsx"; // Import API configuration
+import api from "../../api/axiosConfig.tsx"; // Import API configuration
 
 interface FamilyMember {
   user_name: string;
@@ -15,19 +15,19 @@ const CitizenFamily: React.FC = () => {
     const fetchFamily = async () => {
       try {
         // Simulating API response with dummy data
-        // const response = await api.get("/citizen/family");
-        const response = {
-          data: {
-            statusCode: 200,
-            message: "Family members fetched successfully",
-            data: [
-              { user_name: "john_doe" },
-              { user_name: "jane_doe" },
-              { user_name: "emma_smith" },
-              { user_name: "alex_johnson" },
-            ],
-          },
-        };
+        const response = await api.get("/citizen/family");
+        // const response = {
+        //   data: {
+        //     statusCode: 200,
+        //     message: "Family members fetched successfully",
+        //     data: [
+        //       { user_name: "john_doe" },
+        //       { user_name: "jane_doe" },
+        //       { user_name: "emma_smith" },
+        //       { user_name: "alex_johnson" },
+        //     ],
+        //   },
+        // };
 
         if (response.data.statusCode === 200) {
           setFamily(response.data.data);

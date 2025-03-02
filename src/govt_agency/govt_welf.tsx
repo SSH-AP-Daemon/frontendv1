@@ -33,6 +33,15 @@ const GovernmentAgencyWelfare: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchScheme, setSearchScheme] = useState<string>("");
   const [sortByDeadline, setSortByDeadline] = useState<boolean>(false);
+  const [newScheme, setNewScheme] = useState<{
+    Scheme_name: string;
+    Description: string;
+    Application_deadline: string;
+  }>({
+    Scheme_name: "",
+    Description: "",
+    Application_deadline: "",
+  });
 
   useEffect(() => {
     if (userType !== "GOVERNMENT_AGENCY" || role !== "WELFARE_SCHEME") {
@@ -78,6 +87,24 @@ const GovernmentAgencyWelfare: React.FC = () => {
     }
   };
 
+  const addScheme = async () => {
+    try {
+      // const response = await axios.post("/government-agency/welfare-scheme", newScheme);
+      let response = { data: { data: { Scheme_id: schemes.length + 1 } } }; // Mock response
+      setSchemes([
+        ...schemes,
+        { ...newScheme, Scheme_id: response.data.data.Scheme_id },
+      ]);
+      setNewScheme({
+        Scheme_name: "",
+        Description: "",
+        Application_deadline: "",
+      });
+    } catch (err) {
+      setError("Failed to add scheme.");
+    }
+  };
+
   return (
     <div className="container mt-4">
       <h2>Government Welfare Schemes</h2>
@@ -99,6 +126,46 @@ const GovernmentAgencyWelfare: React.FC = () => {
         onChange={() => setSortByDeadline(!sortByDeadline)}
         className="mb-3"
       />
+
+      {/* Add New Scheme */}
+      <h4>Add New Welfare Scheme</h4>
+      <Form>
+        <Form.Group className="mb-2">
+          <Form.Control
+            type="text"
+            placeholder="Scheme Name"
+            value={newScheme.Scheme_name}
+            onChange={(e) =>
+              setNewScheme({ ...newScheme, Scheme_name: e.target.value })
+            }
+          />
+        </Form.Group>
+        <Form.Group className="mb-2">
+          <Form.Control
+            type="text"
+            placeholder="Description"
+            value={newScheme.Description}
+            onChange={(e) =>
+              setNewScheme({ ...newScheme, Description: e.target.value })
+            }
+          />
+        </Form.Group>
+        <Form.Group className="mb-2">
+          <Form.Control
+            type="date"
+            value={newScheme.Application_deadline}
+            onChange={(e) =>
+              setNewScheme({
+                ...newScheme,
+                Application_deadline: e.target.value,
+              })
+            }
+          />
+        </Form.Group>
+        <Button onClick={addScheme} className="mb-3">
+          Add Scheme
+        </Button>
+      </Form>
 
       {/* Welfare Schemes */}
       {loading ? (

@@ -21,6 +21,7 @@ const CitizenAssets: React.FC = () => {
     const fetchAssets = async () => {
       try {
         const response = await api.get("/citizen/assets");
+        console.log(response);
         // const response = {
         //   data: {
         //     statusCode: 200,
