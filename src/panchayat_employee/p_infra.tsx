@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import { useAuth } from "../AuthContext";
 import { Button, Form, Table, Alert } from "react-bootstrap";
 
@@ -29,32 +29,10 @@ const EmployeeInfrastructure: React.FC = () => {
     fetchInfrastructure();
   }, [userName, role]);
 
-  const mockInfrastructure = [
-    {
-      Infra_id: 1,
-      Description: "Road Construction in Village A",
-      Location: "Village A",
-      Funding: 500000,
-      Actual_cost: 450000,
-      Government_agencies_fk: 101,
-      government_agency_user_name: "Gov Agency 1",
-    },
-    {
-      Infra_id: 2,
-      Description: "Water Supply Project",
-      Location: "Village B",
-      Funding: 300000,
-      Actual_cost: 320000,
-      Government_agencies_fk: 102,
-      government_agency_user_name: "Gov Agency 2",
-    },
-  ];
-
   const fetchInfrastructure = async () => {
     try {
       setLoading(true);
-      // const response = await axios.get("/panchayat-employee/infrastructure");
-      let response = { data: { data: mockInfrastructure } }; // Mock response
+      const response = await api.get("/panchayat-employee/infrastructure");
       setInfrastructure(response.data.data);
     } catch (err) {
       setError("Failed to fetch infrastructure projects.");
@@ -68,7 +46,7 @@ const EmployeeInfrastructure: React.FC = () => {
     actualCost: number
   ) => {
     try {
-      await axios.patch("/panchayat-employee/infrastructure", {
+      await api.patch("/panchayat-employee/infrastructure", {
         Infra_id: infraId,
         actual_cost: actualCost,
       });

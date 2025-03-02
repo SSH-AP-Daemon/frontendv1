@@ -16,6 +16,8 @@ const EmployeeAssets: React.FC = () => {
   const [filteredAssets, setFilteredAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [citizen, setCitizen] = useState<string | null>(null);
+  const [searchCitizen, setSearchCitizen] = useState<string | null>(null);
 
   // State for create/edit modal
   const [showModal, setShowModal] = useState(false);
@@ -35,22 +37,23 @@ const EmployeeAssets: React.FC = () => {
       return;
     }
     fetchAssets();
-  }, [userName, role]);
+  }, [userName, role, searchCitizen]);
 
   // Fetch assets
   const fetchAssets = async () => {
     try {
       setLoading(true);
       const response = await api.get(
-        `/panchayat-employee/assets/${userName}`
+        `/panchayat-employee/assets/${searchCitizen}`
       );
-      console.log(response);
 
       // let response = { data: { data: sampleAssets } };
       setAssets(response.data);
       setFilteredAssets(response.data); // Initially, filtered list = all assets
     } catch (err) {
       setError("Failed to fetch assets.");
+      setAssets([]);
+      setFilteredAssets([]);
     } finally {
       setLoading(false);
     }
@@ -93,7 +96,7 @@ const EmployeeAssets: React.FC = () => {
       const payload = {
         Type: newAsset.Type,
         Valuation: newAsset.Valuation,
-        User_name: userName,
+        User_name: citizen,
       };
 
       if (editingAsset) {
@@ -137,6 +140,12 @@ const EmployeeAssets: React.FC = () => {
 
       {/* Search & Filter */}
       <Form className="mb-3 d-flex gap-3">
+        <Form.Control
+          type="text"
+          placeholder="Search by user name"
+          value={searchCitizen?.toString() ?? ""}
+          onChange={(e) => setSearchCitizen(e.target.value)}
+        />
         <Form.Control
           type="text"
           placeholder="Search by Type"
@@ -230,6 +239,16 @@ const EmployeeAssets: React.FC = () => {
                 value={newAsset.Type}
                 onChange={(e) =>
                   setNewAsset({ ...newAsset, Type: e.target.value })
+                }
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Citizen User Name</Form.Label>
+              <Form.Control
+                type="text"
+                value={citizen?.toString() ?? ""}
+                onChange={(e) =>
+                  setCitizen(e.target.value)
                 }
               />
             </Form.Group>
