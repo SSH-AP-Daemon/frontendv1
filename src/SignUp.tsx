@@ -380,7 +380,7 @@ const SignUp: React.FC = () => {
                     >
                       <option value="">Select Role</option>
                       <option value="ASSET">Asset Manager</option>
-                      <option value="FAMILY">Family Manager</option>
+                      {/* <option value="FAMILY">Family Manager</option> */}
                       <option value="ISSUES">Issue Manager</option>
                       <option value="DOCUMENT">Document Manager</option>
                       <option value="FINANCIAL_DATA">Finance Manager</option>

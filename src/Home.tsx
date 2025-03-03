@@ -195,7 +195,7 @@ export default function Home() {
         </Table>
 
         {/* Census Data Section */}
-        <h2>Census Data</h2>
+        <h2 className={styles.title}>Census Data</h2>
         {census.length > 0 ? (
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
