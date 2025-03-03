@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { Button, Table, Form, Alert } from "react-bootstrap";
 import api from "../../api/axiosConfig.tsx";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
+
+type Census = {
+  year: number;
+  total: number;
+  male: number;
+  female: number;
+  literacy: number;
+};
 
 const AdminDashboard: React.FC = () => {
   const { userType } = useAuth();
@@ -11,6 +20,14 @@ const AdminDashboard: React.FC = () => {
   const [isVerifiedFilter, setIsVerifiedFilter] = useState("");
   const [sortBy, setSortBy] = useState("User_name");
   const [error, setError] = useState<string | null>(null);
+  const [census, setCensus] = useState<Census[]>([]);
+  const [newCensus, setNewCensus] = useState<Census>({
+    year: 0,
+    total: 0,
+    male: 0,
+    female: 0,
+    literacy: 0,
+  });
 
   useEffect(() => {
     if (userType !== "ADMIN") {
@@ -21,12 +38,26 @@ const AdminDashboard: React.FC = () => {
       return;
     }
     fetchUsers();
+    fetchCensusData();
     fetchActivityLog();
   }, [userTypeFilter, isVerifiedFilter]);
 
+  const fetchCensusData = async () => {
+    try {
+      const response = await api.get("/census");
+      setCensus(response.data);
+    } catch (err) {
+      setError("Failed to fetch census data.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
+    }
+  };
+
   const setCensusData = async () => {
     try {
-      const response = await api.get("/admin/census");
+      const response = await api.post("/admin/census");
+      fetchCensusData();
     } catch (err) {
       setError("Failed to add census data.");
       setTimeout(() => {
@@ -181,9 +212,49 @@ const AdminDashboard: React.FC = () => {
         </tbody>
       </Table> */}
       {/* census form */}
-        <Button variant="primary" onClick={setCensusData}>
-          Save Current Year Census
-        </Button>
+      <Button variant="primary" onClick={setCensusData}>
+        Save Current Year Census
+      </Button>
+      {/* Table to show census data */}
+      <h2>Census Data</h2>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Total Population</th>
+            <th>Male</th>
+            <th>Female</th>
+            <th>Literacy Rate (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {census.map((entry) => (
+            <tr key={entry.year}>
+              <td>{entry.year}</td>
+              <td>{entry.total}</td>
+              <td>{entry.male}</td>
+              <td>{entry.female}</td>
+              <td>{entry.literacy}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
+      {/* Line Chart Visualization */}
+      <h2>Year-wise Census Trends</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <XAxis dataKey="year" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total Population" />
+          <Line type="monotone" dataKey="male" stroke="#82ca9d" name="Male Population" />
+          <Line type="monotone" dataKey="female" stroke="#ff7300" name="Female Population" />
+          <Line type="monotone" dataKey="literacy" stroke="#ff0000" name="Literacy Rate (%)" />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 };
