@@ -46,35 +46,51 @@ const envData = [
 ];
 
 export default function Home() {
-
   const [error, setError] = useState<string | null>(null);
   const [census, setCensus] = useState<Census[]>([]);
-  const [newCensus, setNewCensus] = useState<Census>({
-    year: 0,
-    total: 0,
-    male: 0,
-    female: 0,
-    literacy: 0,
-  });
+  const [env, setEnv] = useState<any[]>([]);
 
   useEffect(() => {
     fetchCensusData();
+    fetchEnvData();
   }, []);
-  
+
+  const fetchEnvData = async () => {
+    try {
+      const response = await api.get("user/environmental-data");
+
+      const transformedData = response.data.map((item: any) => ({
+        year: item.Year,
+        aqi: item.Aqi,
+        forestCover: item.Forest_cover,
+        odf: item.Odf,
+        afforestation: item.Afforestation_data,
+        precipitation: item.Precipitation,
+        waterQuality: item.Water_quality,
+      }));
+
+      setEnv(transformedData);
+    } catch (err) {
+      console.error("Env data fetch error:", err);
+      setError("Failed to fetch environmental data.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
+    }
+  };
 
   const fetchCensusData = async () => {
     try {
       const response = await api.get("user/census");
-      
-      // Transform the data to match the expected format in the frontend
+
       const transformedData = response.data.map((item: any) => ({
         year: item.Year,
         total: item.TotalPopulation,
         male: item.MalePopulation,
         female: item.FemalePopulation,
-        literacy: item.LiteracyRate
+        literacy: item.LiteracyRate,
       }));
-      
+
       setCensus(transformedData);
     } catch (err) {
       console.error("Census data fetch error:", err);
@@ -84,108 +100,99 @@ export default function Home() {
       }, 2000);
     }
   };
-  
+
   return (
-    <>
-      <Container fluid className="text-center main-container">
-        <Stack>
-          <h3>Welcome to </h3>
-          <h1>SSH AP Daemon Village</h1>
-          <h2></h2>
-          <h3>Environmental Data</h3>
-          <Row className="mt-4" noGutters gap={2}>
-            <Col>
-              <Card className="chart-card">
-                <Card.Body>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <LineChart data={envData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="year" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="aqi"
-                        stroke="#ff4d4d"
-                        strokeWidth={3}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </Card.Body>
-              </Card>
-            </Col>
+    <Container fluid className="text-center main-container">
+      <Stack>
+        <h3>Welcome to</h3>
+        <h1>SSH AP Daemon Village</h1>
 
-            <Col className="pie-chart-container">
-              <Card className="chart-card">
-                <Card.Body>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie
-                        data={envData}
-                        dataKey="year"
-                        nameKey="population"
-                        outerRadius={100}
-                        fill="#82ca9d"
-                        label
-                      >
-                        {envData.map((_, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+        {/* Environmental Data Section */}
+        <h2>Environmental Data</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={env} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <XAxis dataKey="year" />
+            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="aqi" stroke="#ff4d4d" name="AQI" />
+            <Line type="monotone" dataKey="forestCover" stroke="#228B22" name="Forest Cover (%)" />
+            <Line type="monotone" dataKey="odf" stroke="#FF1493" name="ODF (%)" />
+            <Line type="monotone" dataKey="afforestation" stroke="#8A2BE2" name="Afforestation (hectares)" />
+            <Line type="monotone" dataKey="precipitation" stroke="#1E90FF" name="Precipitation (mm)" />
+            <Line type="monotone" dataKey="waterQuality" stroke="#32CD32" name="Water Quality Index" />
+          </LineChart>
+        </ResponsiveContainer>
 
-          
-          <h2>Census Data</h2>
-
-          {/* Line Chart Visualization */}
-          <h2>Year-wise Census Trends</h2>
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <XAxis dataKey="year" />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total Population" />
-              <Line type="monotone" dataKey="male" stroke="#82ca9d" name="Male Population" />
-              <Line type="monotone" dataKey="female" stroke="#ff7300" name="Female Population" />
-              <Line type="monotone" dataKey="literacy" stroke="#ff0000" name="Literacy Rate (%)" />
-            </LineChart>
-          </ResponsiveContainer>
-          {/* Table to show census data */}
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Year</th>
-                <th>Total Population</th>
-                <th>Male</th>
-                <th>Female</th>
-                <th>Literacy Rate (%)</th>
+        {/* Environmental Data Table */}
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>AQI</th>
+              <th>Forest Cover (%)</th>
+              <th>ODF (%)</th>
+              <th>Afforestation (hectares)</th>
+              <th>Precipitation (mm)</th>
+              <th>Water Quality Index</th>
+            </tr>
+          </thead>
+          <tbody>
+            {env.map((entry) => (
+              <tr key={entry.year}>
+                <td>{entry.year}</td>
+                <td>{entry.aqi}</td>
+                <td>{entry.forestCover}</td>
+                <td>{entry.odf}</td>
+                <td>{entry.afforestation}</td>
+                <td>{entry.precipitation}</td>
+                <td>{entry.waterQuality}</td>
               </tr>
-            </thead>
-            <tbody>
-              {census.map((entry) => (
-                <tr key={entry.year}>
-                  <td>{entry.year}</td>
-                  <td>{entry.total}</td>
-                  <td>{entry.male}</td>
-                  <td>{entry.female}</td>
-                  <td>{entry.literacy}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Stack>
-      </Container>
-    </>
+            ))}
+          </tbody>
+        </Table>
+
+        {/* Census Data Section */}
+        <h2>Census Data</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <XAxis dataKey="year" />
+            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total Population" />
+            <Line type="monotone" dataKey="male" stroke="#82ca9d" name="Male Population" />
+            <Line type="monotone" dataKey="female" stroke="#ff7300" name="Female Population" />
+            <Line type="monotone" dataKey="literacy" stroke="#ff0000" name="Literacy Rate (%)" />
+          </LineChart>
+        </ResponsiveContainer>
+
+        {/* Census Data Table */}
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Total Population</th>
+              <th>Male</th>
+              <th>Female</th>
+              <th>Literacy Rate (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {census.map((entry) => (
+              <tr key={entry.year}>
+                <td>{entry.year}</td>
+                <td>{entry.total}</td>
+                <td>{entry.male}</td>
+                <td>{entry.female}</td>
+                <td>{entry.literacy}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Stack>
+    </Container>
   );
 }
