@@ -21,6 +21,9 @@ const GovernmentAgencyProfile: React.FC = () => {
       setProfile(response.data.data);
     } catch (err) {
       setError("Failed to fetch profile.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }

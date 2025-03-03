@@ -39,6 +39,9 @@ const EmployeeFamily: React.FC = () => {
   useEffect(() => {
     if (role !== "FAMILY") {
       setError("You are not authorized to manage families.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       setLoading(false);
       return;
     }
@@ -57,6 +60,9 @@ const EmployeeFamily: React.FC = () => {
       setFamilies(response.data.data);
     } catch (err) {
       setError("Failed to fetch families.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -73,6 +79,9 @@ const EmployeeFamily: React.FC = () => {
       fetchFamilies();
     } catch (err) {
       setError("Failed to create family.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -85,6 +94,9 @@ const EmployeeFamily: React.FC = () => {
       fetchFamilies();
     } catch (err) {
       setError("Failed to delete family.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

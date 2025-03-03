@@ -39,6 +39,9 @@ const SignIn: React.FC = () => {
     }
 
     setErrors(newErrors);
+    setTimeout(() => {
+      setErrors({ User_name: "", Password: "" });
+    }, 2000);
     return isValid;
   };
 
@@ -90,6 +93,9 @@ const SignIn: React.FC = () => {
     } catch (err: any) {
       alert(err.response?.data?.detail || "Invalid credentials!");
       setErrors(err.response?.data?.detail || "Invalid credentials!");
+      setTimeout(() => {
+        setErrors({ User_name: "", Password: "" });
+      }, 2000);
     }
   };
 

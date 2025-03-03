@@ -70,9 +70,15 @@ const CitizenWelfSchemes: React.FC = () => {
           setSchemes(response.data.data);
         } else {
           setError(response.data.message || "Failed to fetch schemes.");
+          setTimeout(() => {
+            setError(null);
+          }, 2000);
         }
       } catch (err) {
         setError("Error fetching schemes. Please try again.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       } finally {
         setLoading(false);
       }
@@ -111,9 +117,15 @@ const CitizenWelfSchemes: React.FC = () => {
         );
       } else {
         setError("Failed to apply for the scheme.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       }
     } catch (err) {
       setError("Error applying for the scheme. Please try again.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

@@ -81,6 +81,9 @@ const GovernmentAgencyWelfare: React.FC = () => {
       } else {
         setError("Failed to fetch welfare schemes.");
       }
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -90,6 +93,9 @@ const GovernmentAgencyWelfare: React.FC = () => {
   useEffect(() => {
     if (userType !== "GOVERNMENT_AGENCY" || role !== "WELFARE_SCHEME") {
       setError("You are not authorized to manage welfare schemes.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       setLoading(false);
       return;
     }
@@ -110,14 +116,23 @@ const GovernmentAgencyWelfare: React.FC = () => {
       // Validate form
       if (!newScheme.Scheme_name.trim()) {
         setError("Scheme name is required.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
         return;
       }
       if (!newScheme.Description.trim()) {
         setError("Description is required.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
         return;
       }
       if (!newScheme.Application_deadline) {
         setError("Application deadline is required.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
         return;
       }
 
@@ -126,6 +141,9 @@ const GovernmentAgencyWelfare: React.FC = () => {
       const today = new Date();
       if (deadline < today) {
         setError("Application deadline cannot be in the past.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
         return;
       }
 
@@ -150,6 +168,9 @@ const GovernmentAgencyWelfare: React.FC = () => {
       } else {
         setError("Failed to add scheme.");
       }
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

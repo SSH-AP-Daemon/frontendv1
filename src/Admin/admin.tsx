@@ -15,6 +15,9 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     if (userType !== "ADMIN") {
       setError("You are not authorized to access this panel.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       return;
     }
     fetchUsers();
@@ -31,6 +34,9 @@ const AdminDashboard: React.FC = () => {
       setUsers(response.data);
     } catch (err) {
       setError("Failed to fetch users.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -41,6 +47,9 @@ const AdminDashboard: React.FC = () => {
       setActivityLog(response.data.data);
     } catch (err) {
       setError("Failed to fetch activity logs.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -50,6 +59,9 @@ const AdminDashboard: React.FC = () => {
       fetchUsers();
     } catch (err) {
       setError("Failed to delete user.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -59,6 +71,9 @@ const AdminDashboard: React.FC = () => {
       fetchUsers();
     } catch (err) {
       setError("Failed to verify user.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useAuth } from "../AuthContext";
 import { Button, Form, Table, Alert } from "react-bootstrap";
 import api from "../../api/axiosConfig";
@@ -120,6 +120,9 @@ const EmployeeWelfScheme: React.FC = () => {
       // setSchemes(response.data.data);
     } catch (err) {
       setError("Failed to fetch welfare schemes.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -138,6 +141,9 @@ const EmployeeWelfScheme: React.FC = () => {
       setEnrollments(response.data.data);
     } catch (err) {
       setError("Failed to fetch enrollments.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -162,6 +168,9 @@ const EmployeeWelfScheme: React.FC = () => {
       fetchEnrollments();
     } catch (err) {
       setError("Failed to update enrollment status.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

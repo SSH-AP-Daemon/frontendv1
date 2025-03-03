@@ -30,6 +30,9 @@ const EmployeeInfrastructure: React.FC = () => {
   useEffect(() => {
     if (role !== "INFRASTRUCTURE") {
       setError("You are not authorized to manage infrastructure projects.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       setLoading(false);
       return;
     }
@@ -47,6 +50,9 @@ const EmployeeInfrastructure: React.FC = () => {
     } catch (err) {
       console.error("Error fetching infrastructure:", err);
       setError("Failed to fetch infrastructure projects.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -84,6 +90,9 @@ const EmployeeInfrastructure: React.FC = () => {
     } catch (err) {
       console.error("Error updating infrastructure cost:", err);
       setError("Failed to update actual cost. Please try again.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setUpdateLoading(false);
     }

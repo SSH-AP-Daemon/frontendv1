@@ -34,6 +34,10 @@ const EmployeeAssets: React.FC = () => {
     if (role !== "ASSET") {
       setError("You are not authorized to manage assets.");
       setLoading(false);
+      // clear error after 5 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       return;
     }
     fetchAssets();
@@ -52,6 +56,9 @@ const EmployeeAssets: React.FC = () => {
       setFilteredAssets(response.data); // Initially, filtered list = all assets
     } catch (err) {
       setError("Failed to fetch assets.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       setAssets([]);
       setFilteredAssets([]);
     } finally {
@@ -111,6 +118,9 @@ const EmployeeAssets: React.FC = () => {
       fetchAssets();
     } catch (err) {
       setError("Failed to save asset.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -121,6 +131,9 @@ const EmployeeAssets: React.FC = () => {
       fetchAssets();
     } catch (err) {
       setError("Failed to delete asset.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

@@ -50,6 +50,9 @@ const CitizenInfrastructure: React.FC = () => {
           setError(
             response.data.message || "Failed to fetch infrastructure details."
           );
+          setTimeout(() => {
+            setError(null);
+          }, 2000);
         }
       } catch (err: any) {
         if (err.response?.status === 401) {
@@ -59,6 +62,9 @@ const CitizenInfrastructure: React.FC = () => {
         } else {
           setError("Error fetching infrastructure data. Please try again.");
         }
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       } finally {
         setLoading(false);
       }

@@ -48,7 +48,7 @@ function App() {
         <Route path="/employee/documents" element={<EmployeeDocuments />} />
         <Route path="/employee/financial-data" element={<EmployeeFinance />} />
         <Route path="/employee/welfare-scheme" element={<EmployeeWelfScheme />} />
-        <Route path="/employee/environment" element={<EmployeeEnvironment />} />
+        <Route path="/employee/environmental-data" element={<EmployeeEnvironment />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/govt/profile" element={<GovernmentAgencyProfile />} />
         <Route path="/govt_welf" element={<GovernmentAgencyWelfare />} />

@@ -29,9 +29,12 @@ const EmployeeDocuments: React.FC = () => {
     if (role !== "DOCUMENT") {
       setError("You are not authorized to manage documents.");
       setLoading(false);
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       return;
     }
-  }, [userName, role, searchUser]); // Fetch documents when `searchUser` changes
+  }, [userName, role, searchUser]); // Fetch documents when searchUser changes
 
   const fetchDocuments = async () => {
     try {
@@ -41,6 +44,9 @@ const EmployeeDocuments: React.FC = () => {
       setFilteredDocuments(response.data.data); // Set filtered docs initially
     } catch (err) {
       setError("Failed to fetch documents.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -87,6 +93,9 @@ const EmployeeDocuments: React.FC = () => {
     try {
       if (!newDocument.file) {
         setError("Please select a file to upload.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000)
         return;
       }
       const base64String = await fileToBase64(newDocument.file);
@@ -108,6 +117,9 @@ const EmployeeDocuments: React.FC = () => {
       fetchDocuments();
     } catch (err) {
       setError("Failed to save document.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -117,6 +129,9 @@ const EmployeeDocuments: React.FC = () => {
       fetchDocuments();
     } catch (err) {
       setError("Failed to delete document.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
