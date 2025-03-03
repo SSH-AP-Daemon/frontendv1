@@ -6,7 +6,7 @@ import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 import Home from "./Home";
 import CitizenAssets from "./Citizens/citizen_assets";
-import CitizenFamily from "./Citizens/citizen_family";
+// import CitizenFamily from "./Citizens/citizen_family";
 import CitizenIssues from "./Citizens/citizen_issues";
 import CitizenDocuments from "./Citizens/citizen_documents";
 import CitizenFinances from "./Citizens/citizen_finances";
@@ -15,7 +15,7 @@ import CitizenInfrastructure from "./Citizens/citizen_infra";
 import CitizenProfile from "./Citizens/citizen_profile";
 import EmployeeProfile from "./panchayat_employee/p_profile";
 import EmployeeAssets from "./panchayat_employee/p_assets";
-import EmployeeFamily from "./panchayat_employee/p_family";
+// import EmployeeFamily from "./panchayat_employee/p_family";
 import EmployeeIssues from "./panchayat_employee/p_issues";
 import EmployeeDocuments from "./panchayat_employee/p_document";
 import EmployeeFinance from "./panchayat_employee/p_finance";
@@ -35,7 +35,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/citizen/assets" element={<CitizenAssets />} />
-        <Route path="/citizen/family" element={<CitizenFamily />} />
+        {/* <Route path="/citizen/family" element={<CitizenFamily />} /> */}
         <Route path="/citizen/issues" element={<CitizenIssues />} />
         <Route path="/citizen/documents" element={<CitizenDocuments />} />
         <Route path="/citizen/finances" element={<CitizenFinances />} />
@@ -43,7 +43,7 @@ function App() {
         <Route path="/citizen/profile" element={<CitizenProfile />} />
         <Route path="/employee/profile" element={<EmployeeProfile />} />
         <Route path="/employee/assets" element={<EmployeeAssets />} />
-        <Route path="/employee/family" element={<EmployeeFamily />} />
+        {/* <Route path="/employee/family" element={<EmployeeFamily />} /> */}
         <Route path="/employee/issues" element={<EmployeeIssues />} />
         <Route path="/employee/documents" element={<EmployeeDocuments />} />
         <Route path="/employee/financial-data" element={<EmployeeFinance />} />

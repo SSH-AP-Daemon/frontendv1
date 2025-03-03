@@ -106,7 +106,6 @@ const SignUp: React.FC = () => {
           Contact_number: formData.Contact_number,
           User_type: formData.User_type,
           Date_of_birth: formData.Date_of_birth,
-          Date_of_death: formData.Date_of_death,
           Gender: formData.Gender,
           Address: formData.Address,
           Educational_qualification: formData.Educational_qualification,
@@ -252,7 +251,7 @@ const SignUp: React.FC = () => {
                     />
                   </Form.Group>
 
-                  <Form.Group controlId="Date_of_death">
+                  {/* <Form.Group controlId="Date_of_death">
                     <Form.Label>Date of Death</Form.Label>
                     <Form.Control
                       type="date"
@@ -261,7 +260,7 @@ const SignUp: React.FC = () => {
                       onChange={handleChange}
                       required
                     />
-                  </Form.Group>
+                  </Form.Group> */}
 
                   <Form.Group controlId="Gender">
                     <Form.Label>Gender</Form.Label>

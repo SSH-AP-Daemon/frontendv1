@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import api from "../../api/axiosConfig";
 import { useAuth } from "../AuthContext";
 import { Button, Form, Table, Alert, Modal } from "react-bootstrap";
-import api from "../../api/axiosConfig";
 
 // Define Types
 interface Infrastructure {

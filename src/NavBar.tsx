@@ -44,9 +44,9 @@ const NavBar: React.FC = () => {
                 <Nav.Link as={Link} to="/citizen/assets">
                   Assets
                 </Nav.Link>
-                <Nav.Link as={Link} to="/citizen/family">
+                {/* <Nav.Link as={Link} to="/citizen/family">
                   Family
-                </Nav.Link>
+                </Nav.Link> */}
                 <Nav.Link as={Link} to="/citizen/documents">
                   Documents
                 </Nav.Link>
