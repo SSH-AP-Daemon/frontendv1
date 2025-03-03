@@ -35,7 +35,7 @@ const censusData = [
 
 const censusPieData = [
   { name: "2000", value: 50 },
-  { name: "2010", value: 65 },
+  { name: "2010", value: 65 }, 
   { name: "2020", value: 80 },
 ];
 
