@@ -230,7 +230,6 @@ const SignUp: React.FC = () => {
                 >
                   <option value="">Select User Type</option>
                   <option value="CITIZEN">Citizen</option>
-                  <option value="ADMIN">Admin</option>
                   <option value="PANCHAYAT_EMPLOYEE">Panchayat Employee</option>
                   <option value="GOVERNMENT_AGENCY">Government Agency</option>
                 </Form.Select>
