@@ -13,7 +13,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api/axiosConfig.tsx";
 
 
@@ -23,6 +23,16 @@ type Census = {
   male: number;
   female: number;
   literacy: number;
+};
+
+type EnvData = {
+  year: number;
+  aqi: number;
+  forestCover: number;
+  odf: number;
+  afforestation: number;
+  precipitation: number;
+  waterQuality: number;
 };
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
@@ -48,7 +58,7 @@ const envData = [
 export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [census, setCensus] = useState<Census[]>([]);
-  const [env, setEnv] = useState<any[]>([]);
+  const [env, setEnv] = useState<EnvData[]>([]);
 
   useEffect(() => {
     fetchCensusData();
@@ -58,8 +68,12 @@ export default function Home() {
   const fetchEnvData = async () => {
     try {
       const response = await api.get("user/environmental-data");
+      console.log("Environmental data response:", response.data);
 
-      const transformedData = response.data.map((item: any) => ({
+      // Access the nested data array from the response
+      const envDataArray = response.data.data || [];
+
+      const transformedData = envDataArray.map((item: any) => ({
         year: item.Year,
         aqi: item.Aqi,
         forestCover: item.Forest_cover,
@@ -82,8 +96,14 @@ export default function Home() {
   const fetchCensusData = async () => {
     try {
       const response = await api.get("user/census");
+      console.log("Census data response:", response.data);
 
-      const transformedData = response.data.map((item: any) => ({
+      // Handle both direct array response or nested data object
+      const censusDataArray = Array.isArray(response.data) 
+        ? response.data 
+        : (response.data.data || []);
+
+      const transformedData = censusDataArray.map((item: any) => ({
         year: item.Year,
         total: item.TotalPopulation,
         male: item.MalePopulation,
@@ -107,23 +127,34 @@ export default function Home() {
         <h3>Welcome to</h3>
         <h1>SSH AP Daemon Village</h1>
 
+        {/* Error message display */}
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
+
         {/* Environmental Data Section */}
         <h2>Environmental Data</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={env} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <XAxis dataKey="year" />
-            <YAxis />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="aqi" stroke="#ff4d4d" name="AQI" />
-            <Line type="monotone" dataKey="forestCover" stroke="#228B22" name="Forest Cover (%)" />
-            <Line type="monotone" dataKey="odf" stroke="#FF1493" name="ODF (%)" />
-            <Line type="monotone" dataKey="afforestation" stroke="#8A2BE2" name="Afforestation (hectares)" />
-            <Line type="monotone" dataKey="precipitation" stroke="#1E90FF" name="Precipitation (mm)" />
-            <Line type="monotone" dataKey="waterQuality" stroke="#32CD32" name="Water Quality Index" />
-          </LineChart>
-        </ResponsiveContainer>
+        {env.length > 0 ? (
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={env} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <XAxis dataKey="year" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="aqi" stroke="#ff4d4d" name="AQI" />
+              <Line type="monotone" dataKey="forestCover" stroke="#228B22" name="Forest Cover (%)" />
+              <Line type="monotone" dataKey="odf" stroke="#FF1493" name="ODF (%)" />
+              <Line type="monotone" dataKey="afforestation" stroke="#8A2BE2" name="Afforestation (hectares)" />
+              <Line type="monotone" dataKey="precipitation" stroke="#1E90FF" name="Precipitation (mm)" />
+              <Line type="monotone" dataKey="waterQuality" stroke="#32CD32" name="Water Quality Index" />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <p>No environmental data available</p>
+        )}
 
         {/* Environmental Data Table */}
         <Table striped bordered hover>
@@ -139,35 +170,45 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            {env.map((entry) => (
-              <tr key={entry.year}>
-                <td>{entry.year}</td>
-                <td>{entry.aqi}</td>
-                <td>{entry.forestCover}</td>
-                <td>{entry.odf}</td>
-                <td>{entry.afforestation}</td>
-                <td>{entry.precipitation}</td>
-                <td>{entry.waterQuality}</td>
+            {env.length > 0 ? (
+              env.map((entry) => (
+                <tr key={entry.year}>
+                  <td>{entry.year}</td>
+                  <td>{entry.aqi}</td>
+                  <td>{entry.forestCover}</td>
+                  <td>{entry.odf}</td>
+                  <td>{entry.afforestation}</td>
+                  <td>{entry.precipitation}</td>
+                  <td>{entry.waterQuality}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7}>No environmental data available</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </Table>
 
         {/* Census Data Section */}
         <h2>Census Data</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <XAxis dataKey="year" />
-            <YAxis />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total Population" />
-            <Line type="monotone" dataKey="male" stroke="#82ca9d" name="Male Population" />
-            <Line type="monotone" dataKey="female" stroke="#ff7300" name="Female Population" />
-            <Line type="monotone" dataKey="literacy" stroke="#ff0000" name="Literacy Rate (%)" />
-          </LineChart>
-        </ResponsiveContainer>
+        {census.length > 0 ? (
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <XAxis dataKey="year" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total Population" />
+              <Line type="monotone" dataKey="male" stroke="#82ca9d" name="Male Population" />
+              <Line type="monotone" dataKey="female" stroke="#ff7300" name="Female Population" />
+              <Line type="monotone" dataKey="literacy" stroke="#ff0000" name="Literacy Rate (%)" />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <p>No census data available</p>
+        )}
 
         {/* Census Data Table */}
         <Table striped bordered hover>
@@ -181,15 +222,21 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            {census.map((entry) => (
-              <tr key={entry.year}>
-                <td>{entry.year}</td>
-                <td>{entry.total}</td>
-                <td>{entry.male}</td>
-                <td>{entry.female}</td>
-                <td>{entry.literacy}</td>
+            {census.length > 0 ? (
+              census.map((entry) => (
+                <tr key={entry.year}>
+                  <td>{entry.year}</td>
+                  <td>{entry.total}</td>
+                  <td>{entry.male}</td>
+                  <td>{entry.female}</td>
+                  <td>{entry.literacy}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5}>No census data available</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </Table>
       </Stack>
