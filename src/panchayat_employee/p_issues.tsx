@@ -1,29 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import { useAuth } from "../AuthContext";
 import { Table, Button, Form, Alert } from "react-bootstrap";
-
-// Dummy Data for Testing
-const sampleIssues = [
-  {
-    issue_id: 1,
-    description: "Road damage",
-    status: "Open",
-    user_name: "john_doe",
-  },
-  {
-    issue_id: 2,
-    description: "Water leakage",
-    status: "In Progress",
-    user_name: "jane_doe",
-  },
-  {
-    issue_id: 3,
-    description: "Street lights not working",
-    status: "Resolved",
-    user_name: "john_doe",
-  },
-];
 
 interface Issue {
   issue_id: number;
@@ -54,8 +32,7 @@ const EmployeeIssues: React.FC = () => {
   const fetchIssues = async () => {
     try {
       setLoading(true);
-      // const response = await axios.get(`/panchayat-employee/issues`, { headers: { Authorization: `Bearer YOUR_JWT_TOKEN` } });
-      let response = { data: { data: sampleIssues } };
+      const response = await api.get(`/panchayat-employee/issues`);
       setIssues(response.data.data);
       setFilteredIssues(response.data.data);
     } catch (err) {
@@ -85,7 +62,8 @@ const EmployeeIssues: React.FC = () => {
   // Update Issue Status
   const updateIssueStatus = async (issue_id: number, newStatus: string) => {
     try {
-      // await axios.patch(`/panchayat-employee/issues`, { issue_id, status: newStatus }, { headers: { Authorization: `Bearer YOUR_JWT_TOKEN` } });
+      const payload = { issue_id, status: newStatus };
+      await api.put(`/panchayat-employee/issues`, payload);
       setIssues((prev) =>
         prev.map((issue) =>
           issue.issue_id === issue_id ? { ...issue, status: newStatus } : issue
@@ -105,9 +83,9 @@ const EmployeeIssues: React.FC = () => {
       <Form className="mb-3 d-flex gap-3">
         <Form.Select onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="">Filter by Status</option>
-          <option value="Open">Open</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Resolved">Resolved</option>
+          <option value="OPEN">Open</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="RESOLVED">Resolved</option>
         </Form.Select>
         <Form.Select
           onChange={(e) => setSortOrder(e.target.value as "asc" | "desc" | "")}
@@ -142,7 +120,7 @@ const EmployeeIssues: React.FC = () => {
                     size="sm"
                     className="me-2"
                     onClick={() =>
-                      updateIssueStatus(issue.issue_id, "In Progress")
+                      updateIssueStatus(issue.issue_id, "IN_PROGRESS")
                     }
                   >
                     Mark In Progress
@@ -151,7 +129,7 @@ const EmployeeIssues: React.FC = () => {
                     variant="primary"
                     size="sm"
                     onClick={() =>
-                      updateIssueStatus(issue.issue_id, "Resolved")
+                      updateIssueStatus(issue.issue_id, "RESOLVED")
                     }
                   >
                     Mark Resolved

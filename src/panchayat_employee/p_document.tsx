@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import { useAuth } from "../AuthContext";
 import { Table, Button, Form, Modal, Alert } from "react-bootstrap";
-
-// Dummy Data for Testing
-const sampleDocuments = [
-  { Doc_id: 1, Type: "Aadhar", user_name: "john_doe" },
-  { Doc_id: 2, Type: "PAN", user_name: "jane_doe" },
-  { Doc_id: 3, Type: "Voter ID", user_name: "john_doe" },
-];
 
 interface Document {
   Doc_id: number;
@@ -24,15 +17,13 @@ const EmployeeDocuments: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingDocument, setEditingDocument] = useState<Document | null>(null);
-  const [newDocument, setNewDocument] = useState<{
-    Type: string;
-    file: File | null;
-  }>({
+  const [newDocument, setNewDocument] = useState<{ Type: string; citizenUserName: string; file: File | null }>({
     Type: "",
+    citizenUserName: "",
     file: null,
   });
-  const [searchType, setSearchType] = useState(""),
-    [searchUser, setSearchUser] = useState("");
+  const [searchType, setSearchType] = useState("");
+  const [searchUser, setSearchUser] = useState("");
 
   useEffect(() => {
     if (role !== "DOCUMENT") {
@@ -40,19 +31,14 @@ const EmployeeDocuments: React.FC = () => {
       setLoading(false);
       return;
     }
-    fetchDocuments();
-  }, [userName, role]);
+  }, [userName, role, searchUser]); // Fetch documents when `searchUser` changes
 
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      // const response = await axios.get(`/panchayat-employee/document`, {
-      //   headers: { Authorization: `Bearer YOUR_JWT_TOKEN` },
-      //   params: { user_name: userName },
-      // });
-      let response = { data: { data: sampleDocuments } };
+      const response = await api.get(`/panchayat-employee/documents/${searchUser}`); // Apply user filter in API call
       setDocuments(response.data.data);
-      setFilteredDocuments(response.data.data);
+      setFilteredDocuments(response.data.data); // Set filtered docs initially
     } catch (err) {
       setError("Failed to fetch documents.");
     } finally {
@@ -61,41 +47,64 @@ const EmployeeDocuments: React.FC = () => {
   };
 
   useEffect(() => {
-    let filtered = documents;
-    if (searchType) {
-      filtered = filtered.filter((doc) =>
-        doc.Type.toLowerCase().includes(searchType.toLowerCase())
-      );
-    }
-    if (searchUser) {
-      filtered = filtered.filter((doc) =>
-        doc.user_name.toLowerCase().includes(searchUser.toLowerCase())
-      );
-    }
-    setFilteredDocuments(filtered);
-  }, [searchType, searchUser, documents]);
+    const fetchAndFilterDocuments = async () => {
+      await fetchDocuments(); // Wait for data to be fetched
+      console.log("Documents:", documents);
+      console.log(filteredDocuments);
+  
+      // Filtering happens after documents are updated
+      // let filtered = documents;
+  
+      // if (searchUser) {
+      //   filtered = filtered.filter((doc) =>
+      //     doc.user_name.toLowerCase().includes(searchUser.toLowerCase())
+      //   );
+      // }
+  
+      // if (searchType) {
+      //   filtered = filtered.filter((doc) =>
+      //     doc.Type.toLowerCase().includes(searchType.toLowerCase())
+      //   );
+      // }
+  
+      // setFilteredDocuments(filtered);
+    };
+  
+    fetchAndFilterDocuments();
+  }, [searchType, searchUser]); // Dependencies for re-execution
+  
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve((reader.result as string).split(",")[1]);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const handleSaveDocument = async () => {
     try {
-      const formData = new FormData();
-      formData.append("Type", newDocument.Type);
-      formData.append("user_name", userName);
-      if (newDocument.file) {
-        formData.append("Pdf_data", newDocument.file);
+      if (!newDocument.file) {
+        setError("Please select a file to upload.");
+        return;
       }
+      const base64String = await fileToBase64(newDocument.file);
+      const payload = {
+        Type: newDocument.Type,
+        user_name: newDocument.citizenUserName,
+        pdf_data: base64String,
+      };
 
       if (editingDocument) {
-        await axios.put("/panchayat-employee/document", formData, {
-          headers: { Authorization: `Bearer YOUR_JWT_TOKEN` },
-        });
+        await api.put("/panchayat-employee/documents", payload);
       } else {
-        await axios.post("/panchayat-employee/document", formData, {
-          headers: { Authorization: `Bearer YOUR_JWT_TOKEN` },
-        });
+        await api.post("/panchayat-employee/documents", payload);
       }
+
       setShowModal(false);
       setEditingDocument(null);
-      setNewDocument({ Type: "", file: null });
+      setNewDocument({ Type: "", citizenUserName: "", file: null });
       fetchDocuments();
     } catch (err) {
       setError("Failed to save document.");
@@ -104,10 +113,7 @@ const EmployeeDocuments: React.FC = () => {
 
   const handleDeleteDocument = async (docId: number) => {
     try {
-      await axios.delete("/panchayat-employee/document", {
-        data: { doc_id: docId },
-        headers: { Authorization: `Bearer YOUR_JWT_TOKEN` },
-      });
+      await api.delete(`/panchayat-employee/documents/${docId}`);
       fetchDocuments();
     } catch (err) {
       setError("Failed to delete document.");
@@ -118,11 +124,7 @@ const EmployeeDocuments: React.FC = () => {
     <div className="container mt-4">
       <h2>Manage Documents</h2>
       {error && <Alert variant="danger">{error}</Alert>}
-      <Button
-        variant="primary"
-        className="mb-3"
-        onClick={() => setShowModal(true)}
-      >
+      <Button variant="primary" className="mb-3" onClick={() => setShowModal(true)}>
         + Add Document
       </Button>
       <Form className="mb-3 d-flex gap-3">
@@ -137,6 +139,7 @@ const EmployeeDocuments: React.FC = () => {
           placeholder="Search by User"
           value={searchUser}
           onChange={(e) => setSearchUser(e.target.value)}
+          onBlur={fetchDocuments} // Fetch new data when user exits the input field
         />
       </Form>
       {loading ? (
@@ -152,30 +155,30 @@ const EmployeeDocuments: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredDocuments.map((doc, index) => (
-              <tr key={doc.Doc_id}>
-                <td>{index + 1}</td>
-                <td>{doc.Type}</td>
-                <td>{doc.user_name}</td>
-                <td>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDeleteDocument(doc.Doc_id)}
-                  >
-                    Delete
-                  </Button>
-                </td>
+            {Array.isArray(filteredDocuments) ? (
+              filteredDocuments.map((doc, index) => (
+                <tr key={doc.Doc_id}>
+                  <td>{index + 1}</td>
+                  <td>{doc.Type}</td>
+                  <td>{doc.user_name}</td>
+                  <td>
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteDocument(doc.Doc_id)}>
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4}>No documents available.</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </Table>
       )}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>
-            {editingDocument ? "Edit Document" : "Add Document"}
-          </Modal.Title>
+          <Modal.Title>{editingDocument ? "Edit Document" : "Add Document"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -184,9 +187,15 @@ const EmployeeDocuments: React.FC = () => {
               <Form.Control
                 type="text"
                 value={newDocument.Type}
-                onChange={(e) =>
-                  setNewDocument({ ...newDocument, Type: e.target.value })
-                }
+                onChange={(e) => setNewDocument({ ...newDocument, Type: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Citizen User Name</Form.Label>
+              <Form.Control
+                type="text"
+                value={newDocument.citizenUserName}
+                onChange={(e) => setNewDocument({ ...newDocument, citizenUserName: e.target.value })}
               />
             </Form.Group>
             <Form.Group className="mt-2">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axiosConfig";
 import { useAuth } from "../AuthContext";
 import { Button, Form, Table, Modal, Alert } from "react-bootstrap";
 
@@ -12,6 +12,7 @@ import { Button, Form, Table, Modal, Alert } from "react-bootstrap";
 interface FinancialData {
   Financial_id: number;
   year: number;
+  user_name: string;
   Annual_Income: number;
   Income_source: string;
   Tax_paid: number;
@@ -29,7 +30,7 @@ const EmployeeFinance: React.FC = () => {
 
   // Filters
   const [searchYear, setSearchYear] = useState<string>("");
-
+  const [searchCitizen, setSearchCitizen] = useState<string>("");
   const [minIncome, setMinIncome] = useState<string>("");
   const [maxIncome, setMaxIncome] = useState<string>("");
   const [minCreditScore, setMinCreditScore] = useState<string>("");
@@ -40,6 +41,7 @@ const EmployeeFinance: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newData, setNewData] = useState<Partial<FinancialData>>({
     year: 0,
+    user_name: "",
     Annual_Income: 0,
     Income_source: "",
     Tax_paid: 0,
@@ -47,49 +49,6 @@ const EmployeeFinance: React.FC = () => {
     Debt_liability: 0,
     Credit_score: 0,
   });
-
-  const mockData = [
-    {
-      Financial_id: 1,
-      year: 2022,
-      Annual_Income: 50000,
-      Income_source: "Salary",
-      Tax_paid: 5000,
-      Tax_liability: 2000,
-      Debt_liability: 10000,
-      Credit_score: 750,
-    },
-    {
-      Financial_id: 2,
-      year: 2023,
-      Annual_Income: 75000,
-      Income_source: "Freelance",
-      Tax_paid: 7000,
-      Tax_liability: 3000,
-      Debt_liability: 5000,
-      Credit_score: 800,
-    },
-    {
-      Financial_id: 3,
-      year: 2024,
-      Annual_Income: 120000,
-      Income_source: "Investments",
-      Tax_paid: 15000,
-      Tax_liability: 5000,
-      Debt_liability: 3000,
-      Credit_score: 850,
-    },
-    {
-      Financial_id: 4,
-      year: 2022,
-      Annual_Income: 40000,
-      Income_source: "Business",
-      Tax_paid: 4000,
-      Tax_liability: 1500,
-      Debt_liability: 15000,
-      Credit_score: 680,
-    },
-  ];
 
   //   // Mock API call inside fetch function
   //   useEffect(() => {
@@ -110,20 +69,19 @@ const EmployeeFinance: React.FC = () => {
       return;
     }
     fetchFinancialData();
-  }, [userName, role, searchYear]);
+  }, [userName, role, searchYear, searchCitizen]);
 
   const fetchFinancialData = async () => {
     try {
       setLoading(true);
       const params: { year?: string; user_name: string } = {
-        user_name: userName,
+        user_name: searchCitizen,
       };
       if (searchYear) params.year = searchYear;
 
-      let response = { data: { data: mockData } };
-      //   const response = await axios.get("/panchayat-employee/financial-data", {
-      //     params,
-      //   });
+        const response = await api.get("/panchayat-employee/financial-data", {
+          params,
+        });
       setData(response.data.data);
       setFilteredData(response.data.data);
     } catch (err) {
@@ -171,9 +129,8 @@ const EmployeeFinance: React.FC = () => {
   // Create New Financial Data
   const handleCreate = async () => {
     try {
-      await axios.post("/panchayat-employee/financial-data", {
-        ...newData,
-        user_name: userName,
+      await api.post("/panchayat-employee/financial-data", {
+        ...newData
       });
       setShowModal(false);
       fetchFinancialData();
@@ -185,8 +142,8 @@ const EmployeeFinance: React.FC = () => {
   // Delete Financial Data
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete("/panchayat-employee/financial-data", {
-        data: { Financial_id: id },
+      await api.delete("/panchayat-employee/financial-data", {
+        params: { Financial_id: id },
       });
       fetchFinancialData();
     } catch (err) {
@@ -213,6 +170,11 @@ const EmployeeFinance: React.FC = () => {
           type="number"
           placeholder="Year"
           onChange={(e) => setSearchYear(e.target.value)}
+        />
+        <Form.Control
+          type="string"
+          placeholder="Citizen User Name"
+          onChange={(e) => setSearchCitizen(e.target.value)}
         />
         <Form.Control
           type="number"
@@ -293,6 +255,55 @@ const EmployeeFinance: React.FC = () => {
             placeholder="Year"
             onChange={(e) =>
               setNewData({ ...newData, year: Number(e.target.value) })
+            }
+          />
+          <Form.Control
+            type="text"
+            placeholder="Citizen User Name"
+            onChange={(e) =>
+              setNewData({ ...newData, user_name: e.target.value })
+            }
+          />
+          <Form.Control
+            type="number"
+            placeholder="Annual Income"
+            onChange={(e) =>
+              setNewData({ ...newData, Annual_Income: Number(e.target.value) })
+            }
+          />
+          <Form.Control
+            type="text"
+            placeholder="Income Source"
+            onChange={(e) =>
+              setNewData({ ...newData, Income_source: e.target.value })
+            }
+          />
+          <Form.Control
+            type="number"
+            placeholder="Tax Paid"
+            onChange={(e) =>
+              setNewData({ ...newData, Tax_paid: Number(e.target.value) })
+            }
+          />
+          <Form.Control
+            type="number"
+            placeholder="Tax Liability"
+            onChange={(e) =>
+              setNewData({ ...newData, Tax_liability: Number(e.target.value) })
+            }
+          />
+          <Form.Control
+            type="number"
+            placeholder="Debt Liability"
+            onChange={(e) =>
+              setNewData({ ...newData, Debt_liability: Number(e.target.value) })
+            }
+          />
+          <Form.Control
+            type="number"
+            placeholder="Credit Score"
+            onChange={(e) =>
+              setNewData({ ...newData, Credit_score: Number(e.target.value) })
             }
           />
           <Button className="mt-3" onClick={handleCreate}>
