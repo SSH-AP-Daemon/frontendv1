@@ -227,6 +227,22 @@ const AdminDashboard: React.FC = () => {
       <Button variant="primary" onClick={setCensusData}>
         Save Current Year Census
       </Button>
+
+      {/* Line Chart Visualization */}
+      <h2>Year-wise Census Trends</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <XAxis dataKey="year" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total Population" />
+          <Line type="monotone" dataKey="male" stroke="#82ca9d" name="Male Population" />
+          <Line type="monotone" dataKey="female" stroke="#ff7300" name="Female Population" />
+          <Line type="monotone" dataKey="literacy" stroke="#ff0000" name="Literacy Rate (%)" />
+        </LineChart>
+      </ResponsiveContainer>
       {/* Table to show census data */}
       <Table striped bordered hover>
         <thead>
@@ -250,22 +266,6 @@ const AdminDashboard: React.FC = () => {
           ))}
         </tbody>
       </Table>
-
-      {/* Line Chart Visualization */}
-      <h2>Year-wise Census Trends</h2>
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <XAxis dataKey="year" />
-          <YAxis />
-          <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total Population" />
-          <Line type="monotone" dataKey="male" stroke="#82ca9d" name="Male Population" />
-          <Line type="monotone" dataKey="female" stroke="#ff7300" name="Female Population" />
-          <Line type="monotone" dataKey="literacy" stroke="#ff0000" name="Literacy Rate (%)" />
-        </LineChart>
-      </ResponsiveContainer>
     </div>
   );
 };
