@@ -92,7 +92,7 @@ const GovernmentAgencyInfrastructure: React.FC = () => {
   const deleteInfrastructure = async (infraId: number) => {
     try {
       setError(null);
-      await api.delete("/government-agency/infrastructure", { data: { Infra_id: infraId } });
+      await api.delete(`/government-agency/infrastructure/${infraId}`);
       await fetchInfrastructures();
     } catch (err) {
       console.log(err);
