@@ -89,14 +89,17 @@ const CitizenWelfSchemes: React.FC = () => {
        * This will send an actual application request.
        */
 
-      const response = await api.post('/citizen/welfare-enrol', null, {
+      const response = await api.post("/citizen/welfare-enrol", null, {
         params: {
           Scheme_id: schemeId,
         },
       });
 
       // Handling application response
-      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
+      if (
+        response.data.statusCode === 200 ||
+        response.data.statusCode === 201
+      ) {
         setApplyMessage(response.data.message);
         // Update UI to reflect applied status
         setSchemes((prevSchemes) =>

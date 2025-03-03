@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../AuthContext";
 import { Button, Form, Table, Alert } from "react-bootstrap";
+import api from "../../api/axiosConfig";
 
 // Define Types
 interface WelfareScheme {
@@ -110,13 +111,12 @@ const EmployeeWelfScheme: React.FC = () => {
       if (searchScheme) params.scheme_name = searchScheme;
 
       // Mock API response (for testing)
-      let response = { data: { data: mockSchemes } };
-      setSchemes(response.data.data);
-
+      // let response = { data: { data: mockSchemes } };
+      
       // Uncomment this when integrating with backend:
-      // const response = await axios.get("/panchayat-employee/welfare-schemes", {
-      //   params,
-      // });
+      const response = await api.get("/panchayat-employee/welfare-schemes");
+      setSchemes(response.data.data);
+      console.log(response.data.data);
       // setSchemes(response.data.data);
     } catch (err) {
       setError("Failed to fetch welfare schemes.");
@@ -133,15 +133,9 @@ const EmployeeWelfScheme: React.FC = () => {
       if (searchScheme) params.scheme_name = searchScheme;
       if (searchStatus) params.status = searchStatus;
 
-      // Mock API response (for testing)
-      let response = { data: { data: mockEnrollments } };
-      setEnrollments(response.data.data);
-
       // Uncomment this when integrating with backend:
-      // const response = await axios.get("/panchayat-employee/welfare-enrol", {
-      //   params,
-      // });
-      // setEnrollments(response.data.data);
+      const response = await api.get("/panchayat-employee/welfare-enrol");
+      setEnrollments(response.data.data);
     } catch (err) {
       setError("Failed to fetch enrollments.");
     } finally {
@@ -159,11 +153,11 @@ const EmployeeWelfScheme: React.FC = () => {
       console.log(`Updating status: ${newStatus} for Citizen ${citizenId}`);
 
       // Uncomment this when integrating with backend:
-      // await axios.patch("/panchayat-employee/welfare-enrol", {
-      //   scheme_id: schemeId,
-      //   citizen_id: citizenId,
-      //   status: newStatus,
-      // });
+      await api.put("/panchayat-employee/welfare-enrol", {
+        scheme_id: schemeId,
+        citizen_id: citizenId,
+        status: newStatus,
+      });
 
       fetchEnrollments();
     } catch (err) {

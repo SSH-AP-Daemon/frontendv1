@@ -21,6 +21,10 @@ const NavBar: React.FC = () => {
 
   const logout = () => {
     // call logout API //TODO
+    localStorage.removeItem("userType");
+    localStorage.removeItem("role");
+    // localStorage.removeItem("jwtToken");
+    // localStorage.removeItem("userName");
     setUserType("notLoggedIn");
     navigate("/");
   };
