@@ -13,7 +13,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import api from "../api/axiosConfig.tsx";
 
 
@@ -56,13 +56,28 @@ export default function Home() {
     female: 0,
     literacy: 0,
   });
+
+  useEffect(() => {
+    fetchCensusData();
+  }, []);
   
 
   const fetchCensusData = async () => {
     try {
-      const response = await api.get("/census");
-      setCensus(response.data);
+      const response = await api.get("user/census");
+      
+      // Transform the data to match the expected format in the frontend
+      const transformedData = response.data.map((item: any) => ({
+        year: item.Year,
+        total: item.TotalPopulation,
+        male: item.MalePopulation,
+        female: item.FemalePopulation,
+        literacy: item.LiteracyRate
+      }));
+      
+      setCensus(transformedData);
     } catch (err) {
+      console.error("Census data fetch error:", err);
       setError("Failed to fetch census data.");
       setTimeout(() => {
         setError(null);
