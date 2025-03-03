@@ -32,9 +32,15 @@ const CitizenDocuments: React.FC = () => {
           setDocuments(response.data.data);
         } else {
           setError(response.data.message || "Failed to fetch documents.");
+          setTimeout(() => {
+            setError(null);
+          }, 2000);
         }
       } catch (err) {
         setError("Error fetching documents. Please try again.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       } finally {
         setLoading(false);
       }

@@ -29,9 +29,15 @@ const EmployeeProfile: React.FC = () => {
           setRole(response.data.data.Role);
         } else {
           setError("Failed to fetch profile data");
+          setTimeout(() => {
+            setError(null);
+          }, 2000);
         }
       } catch (err) {
         setError("Error fetching profile");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       } finally {
         setLoading(false);
       }

@@ -57,9 +57,15 @@ const CitizenIssues: React.FC = () => {
         setIssues(response.data.data);
       } else {
         setError(response.data.message || "Failed to fetch issues.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       }
     } catch (err) {
       setError("Error fetching issues. Please try again.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -97,6 +103,9 @@ const CitizenIssues: React.FC = () => {
       }
     } catch (err) {
       setError("Error creating issue. Please try again.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -113,6 +122,9 @@ const CitizenIssues: React.FC = () => {
       }
     } catch (err) {
       setError("Error deleting issue. Please try again.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

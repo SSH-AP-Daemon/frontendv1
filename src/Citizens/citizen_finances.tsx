@@ -67,9 +67,15 @@ const CitizenFinances: React.FC = () => {
           setFinancialData(response.data.data);
         } else {
           setError(response.data.message || "Failed to fetch financial data.");
+          setTimeout(() => {
+            setError(null);
+          }, 2000);
         }
       } catch (err) {
         setError("Error fetching financial data. Please try again.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       } finally {
         setLoading(false);
       }

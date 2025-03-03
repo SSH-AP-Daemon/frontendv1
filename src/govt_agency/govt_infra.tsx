@@ -53,6 +53,9 @@ const GovernmentAgencyInfrastructure: React.FC = () => {
       } else {
         setError("Failed to fetch infrastructures.");
       }
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -61,6 +64,9 @@ const GovernmentAgencyInfrastructure: React.FC = () => {
   useEffect(() => {
     if (userType !== "GOVERNMENT_AGENCY" || role !== "INFRASTRUCTURE") {
       setError("You are not authorized to manage infrastructures.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       setLoading(false);
       return;
     }
@@ -85,6 +91,9 @@ const GovernmentAgencyInfrastructure: React.FC = () => {
       } else {
         setError("Failed to add infrastructure.");
       }
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -92,11 +101,14 @@ const GovernmentAgencyInfrastructure: React.FC = () => {
   const deleteInfrastructure = async (infraId: number) => {
     try {
       setError(null);
-      await api.delete("/government-agency/infrastructure", { data: { Infra_id: infraId } });
+      await api.delete(`/government-agency/infrastructure/${infraId}`);
       await fetchInfrastructures();
     } catch (err) {
       console.log(err);
       setError("Failed to delete infrastructure.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

@@ -34,10 +34,16 @@ const CitizenProfile: React.FC = () => {
           setProfile(response.data.data); // Changed this line
         } else {
           setError("Failed to fetch profile details.");
+          setTimeout(() => {
+            setError(null);
+          }, 2000);
         }
       } catch (err) {
         console.error("API Error:", err); // Add this for debugging
         setError("Error fetching profile data. Please try again.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       } finally {
         setLoading(false);
       }

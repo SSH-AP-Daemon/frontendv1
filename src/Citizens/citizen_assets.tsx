@@ -60,9 +60,15 @@ const CitizenAssets: React.FC = () => {
           setAssets(response.data.data);
         } else {
           setError(response.data.message || "Failed to fetch assets");
+          setTimeout(() => {
+            setError(null);
+          }, 2000);
         }
       } catch (err: any) {
         setError("Error fetching assets. Please try again.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       } finally {
         setLoading(false);
       }

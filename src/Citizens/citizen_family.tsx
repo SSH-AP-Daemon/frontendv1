@@ -33,9 +33,15 @@ const CitizenFamily: React.FC = () => {
           setFamily(response.data.data);
         } else {
           setError(response.data.message || "Failed to fetch family members.");
+          setTimeout(() => {
+            setError(null);
+          }, 2000);
         }
       } catch (err: any) {
         setError("Error fetching family data. Please try again.");
+        setTimeout(() => {
+          setError(null);
+        }, 2000);
       } finally {
         setLoading(false);
       }

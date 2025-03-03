@@ -34,7 +34,7 @@ const EmployeeDocuments: React.FC = () => {
       }, 2000);
       return;
     }
-  }, [userName, role, searchUser]); // Fetch documents when `searchUser` changes
+  }, [userName, role, searchUser]); // Fetch documents when searchUser changes
 
   const fetchDocuments = async () => {
     try {

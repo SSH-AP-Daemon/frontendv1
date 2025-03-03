@@ -65,6 +65,9 @@ const EmployeeFinance: React.FC = () => {
   useEffect(() => {
     if (role !== "FINANCIAL_DATA") {
       setError("You are not authorized to view financial data.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
       setLoading(false);
       return;
     }
@@ -86,6 +89,9 @@ const EmployeeFinance: React.FC = () => {
       setFilteredData(response.data.data);
     } catch (err) {
       setError("Failed to fetch financial data.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -136,6 +142,9 @@ const EmployeeFinance: React.FC = () => {
       fetchFinancialData();
     } catch (err) {
       setError("Failed to create financial data.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 
@@ -148,6 +157,9 @@ const EmployeeFinance: React.FC = () => {
       fetchFinancialData();
     } catch (err) {
       setError("Failed to delete financial data.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
 

@@ -60,6 +60,10 @@ const SignUp: React.FC = () => {
     }
 
     setErrors(newErrors);
+    
+    setTimeout(() => {
+      setErrors({});
+    }, 2000);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -136,6 +140,9 @@ const SignUp: React.FC = () => {
         err.response?.data?.detail ||
           "SignUp failed. Please check your credentials."
       );
+      setTimeout(() => {
+        setErrors({});
+      }, 2000);
     }
   };
 
