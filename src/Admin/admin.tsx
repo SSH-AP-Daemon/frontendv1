@@ -212,11 +212,11 @@ const AdminDashboard: React.FC = () => {
         </tbody>
       </Table> */}
       {/* census form */}
+      <h2>Census Data</h2>
       <Button variant="primary" onClick={setCensusData}>
         Save Current Year Census
       </Button>
       {/* Table to show census data */}
-      <h2>Census Data</h2>
       <Table striped bordered hover>
         <thead>
           <tr>

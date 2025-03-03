@@ -1,5 +1,5 @@
 // import { Stack } from "react-bootstrap";
-import { Container, Row, Col, Card, Stack } from "react-bootstrap";
+import { Button, Table, Container, Row, Col, Card, Stack } from "react-bootstrap";
 import {
   LineChart,
   Line,
@@ -13,6 +13,17 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import { useEffect, useState } from "react";
+import api from "../api/axiosConfig.tsx";
+
+
+type Census = {
+  year: number;
+  total: number;
+  male: number;
+  female: number;
+  literacy: number;
+};
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
@@ -35,6 +46,30 @@ const envData = [
 ];
 
 export default function Home() {
+
+  const [error, setError] = useState<string | null>(null);
+  const [census, setCensus] = useState<Census[]>([]);
+  const [newCensus, setNewCensus] = useState<Census>({
+    year: 0,
+    total: 0,
+    male: 0,
+    female: 0,
+    literacy: 0,
+  });
+  
+
+  const fetchCensusData = async () => {
+    try {
+      const response = await api.get("/census");
+      setCensus(response.data);
+    } catch (err) {
+      setError("Failed to fetch census data.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
+    }
+  };
+  
   return (
     <>
       <Container fluid className="text-center main-container">
@@ -93,56 +128,47 @@ export default function Home() {
             </Col>
           </Row>
 
-          <h3>Census Data</h3>
-          <Row className="mt-4" noGutters gap={2}>
-            <Col>
-              <Card className="chart-card">
-                <Card.Body>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <LineChart data={censusData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="year" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="population"
-                        stroke="#007bff"
-                        strokeWidth={3}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </Card.Body>
-              </Card>
-            </Col>
+          
+          <h2>Census Data</h2>
 
-            <Col className="pie-chart-container">
-              <Card className="chart-card">
-                <Card.Body>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie
-                        data={censusPieData}
-                        dataKey="value"
-                        nameKey="name"
-                        outerRadius={100}
-                        fill="#8884d8"
-                        label
-                      >
-                        {censusPieData.map((_, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+          {/* Line Chart Visualization */}
+          <h2>Year-wise Census Trends</h2>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={census} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <XAxis dataKey="year" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="total" stroke="#8884d8" name="Total Population" />
+              <Line type="monotone" dataKey="male" stroke="#82ca9d" name="Male Population" />
+              <Line type="monotone" dataKey="female" stroke="#ff7300" name="Female Population" />
+              <Line type="monotone" dataKey="literacy" stroke="#ff0000" name="Literacy Rate (%)" />
+            </LineChart>
+          </ResponsiveContainer>
+          {/* Table to show census data */}
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Total Population</th>
+                <th>Male</th>
+                <th>Female</th>
+                <th>Literacy Rate (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {census.map((entry) => (
+                <tr key={entry.year}>
+                  <td>{entry.year}</td>
+                  <td>{entry.total}</td>
+                  <td>{entry.male}</td>
+                  <td>{entry.female}</td>
+                  <td>{entry.literacy}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </Stack>
       </Container>
     </>
