@@ -24,6 +24,17 @@ const AdminDashboard: React.FC = () => {
     fetchActivityLog();
   }, [userTypeFilter, isVerifiedFilter]);
 
+  const setCensusData = async () => {
+    try {
+      const response = await api.get("/admin/census");
+    } catch (err) {
+      setError("Failed to add census data.");
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
+    }
+  };
+
   const fetchUsers = async () => {
     try {
       const params: { User_type?: string; Is_verified?: string } = {};
@@ -83,7 +94,7 @@ const AdminDashboard: React.FC = () => {
       {error && <Alert variant="danger">{error}</Alert>}
 
       {/* Filters */}
-      <Form.Select
+      {/* <Form.Select
         className="mb-3"
         onChange={(e) => setUserTypeFilter(e.target.value)}
       >
@@ -99,7 +110,7 @@ const AdminDashboard: React.FC = () => {
         <option value="">All</option>
         <option value="true">Verified</option>
         <option value="false">Not Verified</option>
-      </Form.Select>
+      </Form.Select> */}
 
       {/* Users Table */}
       <h3>Users</h3>
@@ -144,7 +155,7 @@ const AdminDashboard: React.FC = () => {
       </Table>
 
       {/* Activity Log */}
-      <h3>Activity Log</h3>
+      {/* <h3>Activity Log</h3>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -168,7 +179,11 @@ const AdminDashboard: React.FC = () => {
             </tr>
           ))}
         </tbody>
-      </Table>
+      </Table> */}
+      {/* census form */}
+        <Button variant="primary" onClick={setCensusData}>
+          Save Current Year Census
+        </Button>
     </div>
   );
 };

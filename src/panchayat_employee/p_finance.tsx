@@ -88,6 +88,8 @@ const EmployeeFinance: React.FC = () => {
       setData(response.data.data);
       setFilteredData(response.data.data);
     } catch (err) {
+      setData([]);
+      setFilteredData([]);
       setError("Failed to fetch financial data.");
       setTimeout(() => {
         setError(null);
