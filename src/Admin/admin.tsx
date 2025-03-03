@@ -26,7 +26,7 @@ const AdminDashboard: React.FC = () => {
 
   const setCensusData = async () => {
     try {
-      const response = await api.get("/admin/census");
+      const response = await api.post("/admin/census");
     } catch (err) {
       setError("Failed to add census data.");
       setTimeout(() => {
