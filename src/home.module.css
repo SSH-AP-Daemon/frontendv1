@@ -1,0 +1,25 @@
+.homeHeader{
+    align-self: center;
+    height: 40vh;
+    width: 100vw;
+    position: absolute;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.header {
+    height: 40vh;
+    align-items: center;
+    justify-self: center;
+    color: rgb(60 46 0);
+    margin-top: auto;
+    text-shadow: 0 0 5px #ffffff;
+    align-content: center;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: bold;
+}
+
+.title {
+    width: 80vw;
+    background-color: rgb(189, 209, 240);
+}

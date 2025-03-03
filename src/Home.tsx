@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import api from "../api/axiosConfig.tsx";
+import styles from "./home.module.css";
 
 
 type Census = {
@@ -124,8 +125,11 @@ export default function Home() {
   return (
     <Container fluid className="text-center main-container">
       <Stack>
-        <h3>Welcome to</h3>
-        <h1>SSH AP Daemon Village</h1>
+        <img src="/bgimg.jpg" alt="bg image" className={styles.homeHeader}/>
+        <div className={styles.header}>
+          <h3>Welcome to</h3>
+          <h1>SSH_AP DAEMON VILLAGE</h1>
+        </div>
 
         {/* Error message display */}
         {error && (
@@ -135,7 +139,7 @@ export default function Home() {
         )}
 
         {/* Environmental Data Section */}
-        <h2>Environmental Data</h2>
+        <h2 className={styles.title}> Environmental Data</h2>
         {env.length > 0 ? (
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={env} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
